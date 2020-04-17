@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+     width="1200" height="600" viewBox="-600.0 -300.0 1200 600">
+<defs>
+</defs>
+<path d="M-500,-50 L-200,-50 L-200,-250 L-500,-250 L-500,-50" stroke-width="5" fill="#eeee00" stroke="black" />
+<rect x="200" y="-250" width="300" height="200" fill="#1248ff" stroke-width="5" stroke="red" />
+<circle cx="0" cy="50" r="50" fill="red" stroke-width="5" stroke="black" />
+<path d="M250,-100 l200,0 v-100 h-200 Z" stroke-width="5" stroke="green" fill="black" fill-opacity="1" />
+</svg>
