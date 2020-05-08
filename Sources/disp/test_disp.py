@@ -41,20 +41,20 @@ test_disp_setup_params = {}
 test_disp_mode_params = {}
 
 test_disp_test_case_list = {
-                             1: 'Validation of Driver Name and Driver Path of Display',
-                             2: 'Validation of Resolution, Aspect Ratio, Panel Interface and Frequency',
-                             3: 'Change the Resolution and Frequency of the display',
-                             4: 'Change the Brightness of the display',
-                             5: 'Validation of EDID and DDC information',
-                             6: 'Generate different color patterns in the display',
-                             7: 'Render 2D vector application',
-                             8: 'Validation of color depth',
-                             9: 'Validation of loosless image compression and expansion',
-                             10: 'Validation of Shading Effect', 
-                             11: 'Verification for display configuration in DTS file',
-                             12: 'Validation for DMA Monitoring',
-                             13: 'Validation for LVDS panel interface',
-                             14: 'Validation for different pannels'
+                             1: 'DISP_01 : Validation of Driver Name and Driver Path of Display',
+                             2: 'DISP_02 : Validation of Resolution, Aspect Ratio, Panel Interface and Frequency',
+                             3: 'DISP_03 : Change the Resolution and Frequency of the display',
+                             4: 'DISP_04 : Change the Brightness of the display',
+                             5: 'DISP_05 : Validation of EDID and DDC information',
+                             6: 'DISP_06 : Generate different color patterns in the display',
+                             7: 'DISP_07 : Render 2D vector application',
+                             8: 'DISP_08 : Validation of color depth',
+                             9: 'DISP_09 : Validation of loosless image compression and expansion',
+                             10: 'DISP_10 : Validation of Shading Effect', 
+                             11: 'DISP_11 : Verification for display configuration in DTS file',
+                             12: 'DISP_12 : Validation for DMA Monitoring',
+                             13: 'DISP_13 : Validation for LVDS panel interface',
+                             14: 'DISP_14 : Validation for different pannels'
                            }
 
 # List of Sanity test cases

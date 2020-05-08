@@ -1,3 +1,3 @@
 :: Test report for Display IP validation with Single test case ::
 Test_Case_Number,Test_Case_Desc,Test_Result,Test_Err_Code,Test_Result_Desc
-8,Validation of color depth,Pass,0,Test case completed without any failures
+14,DISP_14 : Validation for different pannels,Skip,3,Skip the test case for Display during DISP_14 : Validation for different pannels!
