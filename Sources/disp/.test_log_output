@@ -1,0 +1,16 @@
+TEST_DEBUG: test_disp.py:412:test_disp_main(): Using the random seed of 1595494038 for the Python tests
+TEST_INFO: test_disp.py:446:test_disp_main(): Starting the Display - IP validation with Single test case
+TEST_INFO: test_disp.py:208:test_disp_execute_case(): Starting the execution of Display test case 6 (DISP_06 : Image Scaling)
+TEST_INFO: test_disp.py:260:test_disp_execute_case(): Thu Jul 23 14:17:18 2020 ═══════════ TEST_ID :: DISP_06 : Test Iteration : 1 ═══════════
+TEST_INFO: test_disp.py:708:img_scaling(): Thu Jul 23 14:17:18 2020 : Checking is Source Image is Available.. 
+TEST_INFO: test_disp.py:712:img_scaling(): Thu Jul 23 14:17:18 2020 : Source Image path found..
+TEST_INFO: test_disp.py:719:img_scaling(): Thu Jul 23 14:17:18 2020 : Scaling Image to : 50%
+TEST_INFO: test_disp.py:726:img_scaling(): Thu Jul 23 14:17:18 2020 : Writing the Scaled image to the output Image.
+TEST_INFO: test_disp.py:729:img_scaling(): Thu Jul 23 14:17:18 2020 : Successfully written the Output image in location : Retro_50.png
+TEST_INFO: test_disp.py:719:img_scaling(): Thu Jul 23 14:17:18 2020 : Scaling Image to : 75%
+TEST_INFO: test_disp.py:726:img_scaling(): Thu Jul 23 14:17:18 2020 : Writing the Scaled image to the output Image.
+TEST_INFO: test_disp.py:729:img_scaling(): Thu Jul 23 14:17:18 2020 : Successfully written the Output image in location : Retro_75.png
+TEST_DEBUG: test_disp.py:318:test_disp_execute_case(): Test case completed without any failures
+TEST_DEBUG: test_disp.py:389:test_disp_teardown(): Cleaning-up the resources used for the Display testing
+TEST_DEBUG: test_disp.py:483:test_disp_main(): Successfully completed the Display - IP validation with Single test case
+TEST_INFO: test_disp.py:492:test_disp_main(): Display - IP validation with Single test case completed successfully with return code 0 (Pass)

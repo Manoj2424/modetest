@@ -32,7 +32,7 @@ TEST_TEMP_FILES = .test_case_report \
 				  .test_suite_report
 
 # Test python file
-TEST_PY_FILE = ./test_uart.py
+TEST_PY_FILE = ./test_disp.py
 
 # IP validation main entry file
 TEST_MAIN_ENTRY_DIR = ..
@@ -42,7 +42,7 @@ TEST_MAIN_ENTRY_FILE = ip_validate.sh
 TEST_BIN_DIR = bin
 
 # Test binary file
-TEST_BIN_FILE = test_uart
+TEST_BIN_FILE = test_disp
 
 # Installation directory
 TEST_OUTPUT_DIR = ../output
@@ -51,7 +51,7 @@ TEST_OUTPUT_DIR = ../output
 TEMP_OUTPUT_DIR = .temp_output
 
 # IP directory name
-TEST_IP_DIR = uart
+TEST_IP_DIR = gpu
 
 # Time string
 TEST_TIME_STR = $(shell date +%Y%m%d_%H%M%S)

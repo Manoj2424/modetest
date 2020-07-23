@@ -302,7 +302,6 @@ extern int test_rand_seed;
                 PRINT_LOG(TEST_RESULT_FILE, "w+", "%s", test_result_msg);       \
                 test_result = TEST_RESULT_NOTICE;                               \
             }                                                                   \
-            return test_result;                                                 \
         }                                                                       \
     } while(0)
 
@@ -318,7 +317,6 @@ extern int test_rand_seed;
                 PRINT_LOG(TEST_RESULT_FILE, "w+", "%s", test_result_msg);       \
                 test_result = TEST_RESULT_NOTICE;                               \
             }                                                                   \
-            return test_result;                                                 \
         }                                                                       \
     } while(0)
 
@@ -334,7 +332,6 @@ extern int test_rand_seed;
                 PRINT_LOG(TEST_RESULT_FILE, "w+", "%s", test_result_msg);       \
                 test_result = TEST_RESULT_NOTICE;                               \
             }                                                                   \
-            return test_result;                                                 \
         }                                                                       \
     } while(0)
 
@@ -350,7 +347,6 @@ extern int test_rand_seed;
                 PRINT_LOG(TEST_RESULT_FILE, "w+", "%s", test_result_msg);       \
                 test_result = TEST_RESULT_NOTICE;                               \
             }                                                                   \
-            return test_result;                                                 \
         }                                                                       \
     } while(0)
 
@@ -373,7 +369,6 @@ extern int test_rand_seed;
             PRINT_LOG(TEST_RESULT_FILE, "w+", "%s", test_result_msg);               \
             test_result = TEST_RESULT_WARNING;                                      \
         }                                                                           \
-        return test_result;                                                         \
     } while(0)
 
 #define ERROR_TEST(fmt, args...)                                                \

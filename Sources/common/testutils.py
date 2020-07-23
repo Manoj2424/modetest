@@ -130,7 +130,7 @@ def test_wait_secs(wait_secs):
 def test_suite_update_result(err_code):
     global test_suite_result_code
 
-    if err_code > test_case_result_code:
+    if err_code > test_suite_result_code:
         test_suite_result_code = err_code
 
 # Helper method to update the test case result code and string

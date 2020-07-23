@@ -42,6 +42,9 @@ copy_cmd='cp -a --no-preserve=mode,ownership'
 test_working_dir=$(pwd)
 test_log_dir=../logs
 python_binary=python3
+csv2html_tool=../common/csv2htm.sh
+test_report_file=.test_suite_report
+test_report_html=test_report.htm
 
 # Test input parameters
 test_ip_type=
@@ -219,6 +222,8 @@ test_log_file=${test_ip_type}_log_${time_string}.txt
 echo "Using the log file ${test_log_file} for ${test_ip_type^^} validation..."
 ( cd ${test_ip_type} && ${python_binary} ${test_python_file} ${test_ip_params} |& tee -a ${test_log_dir}/${test_log_file} )
 retval=$?
+echo "Generating the HTML report file (${test_report_html}) for the ${test_ip_type^^}..."
+( cd ${test_ip_type} && ${csv2html_tool} ${test_report_file} ${test_ip_type} ${test_log_dir}/${test_log_file} > ${test_report_html})
 if [ ${retval} -ne 0 ]; then
     echo -e "${BRED}Test suite for ${test_ip_type^^} returned with error code ${retval}!${BNRM}"
     exit ${retval}
