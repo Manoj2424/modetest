@@ -2,7 +2,7 @@
 
 #################################################################################
 # File Name: test_gpu.py                                                        #
-# Description: Python test entry file for validating GPU                        #
+# Description: Python test entry file for validating DISPLAY                    #
 # Author: Ganesh Shanubhogue (DevSys)                                           #
 # Last Modified: 10-Feb-2020                                                    #
 #                                                                               #
@@ -20,6 +20,7 @@ import signal
 import cv2
 import numpy as np
 
+
 # Import test specific utilities
 sys.path.append('../common')
 import testutils
@@ -27,66 +28,72 @@ import testutils
 # import validator
 
 #################################################################################
-# GPU Constant Definitions                                                     #
+# DISPLAY Constant Definitions                                                     #
 #################################################################################
-TOTAL_GPU_TESTS = 20  # Total number of tests for GPU IP
-DISP_TEST_C_BINARY_FILE = './bin/test_disp'  # GPU test binary file for executing test cases implemented in C
-# TEST_GPU_SUPP_BAUD_RATE    = [9600, 19200, 38400, 57600, 115200]
-# TEST_GPU_SUPP_DATA_BITS    = [5, 6, 7, 8]
-# TEST_GPU_SUPP_PARITY_BITS  = ['none', 'even', 'odd', 'mark', 'space']
-# TEST_GPU_SUPP_STOP_BITS    = ['1p0', '1p5', '2p0']
+TOTAL_DISPLAY_TESTS = 20  # Total number of tests for DISPLAY IP
+DISP_TEST_C_BINARY_FILE = './bin/test_disp'  # DISPLAY test binary file for executing test cases implemented in C
+# TEST_DISPLAY_SUPP_BAUD_RATE    = [9600, 19200, 38400, 57600, 115200]
+# TEST_DISPLAY_SUPP_DATA_BITS    = [5, 6, 7, 8]
+# TEST_DISPLAY_SUPP_PARITY_BITS  = ['none', 'even', 'odd', 'mark', 'space']
+# TEST_DISPLAY_SUPP_STOP_BITS    = ['1p0', '1p5', '2p0']
 
 #################################################################################
-# GPU Global Variables                                                         #
+# DISPLAY Global Variables                                                         #
 #################################################################################
 test_disp_setup_params = {}
 test_disp_mode_params = {}
 iteration = 1
-# List of supported test cases for GPU
+# List of supported test cases for DISPLAY
 test_disp_test_case_list = {
-    1: 'DISP_01 : Check fb0 Support.',
-    2: 'DISP_02 : Display Resolution & BPP Info',
-    3: 'DISP_03 : Generate Color Palette from a Image.',
-    4: 'DISP_04 : Change Brightness',
-    5: 'DISP_05 : Alpha Blending',
-    6: 'DISP_06 : Image Scaling',
-    7: 'DISP_07 : Display EDID Info',
-    8: 'DISP_08 : Change Display Resolution',
-    9: 'DISP_09 : Change Color Depth',
-    10: 'DISP_10 : Depth & Pixel Info from Image',
-    11: 'DISP_11 : Change Image Color Bit'
+    1: 'NB2_DISP_01 : Check fb0 Support.',
+    2: 'NB2_DISP_02 : Display Interface and Resolution Info',
+    3: 'NB2_DISP_03 : Render a Image/Program on Display',
+    4: 'NB2_DISP_04 : Generate Color Palette from a Image.',
+    5: 'NB2_DISP_05 : Change Brightness',
+    6: 'NB2_DISP_06 : Alpha Blending',
+    7: 'NB2_DISP_07 : Image Scaling',
+    8: 'NB2_DISP_08 : Display EDID Info',
+    9: 'NB2_DISP_09 : Change Display Resolution',
+    10: 'NB2_DISP_10 : Change Color Depth',
+    11: 'NB2_DISP_11 : Depth & Pixel Info from Image',
+    12: 'NB2_DISP_12 : Change Image Color Bit',
+    13: 'NB2_DISP_13 : Create and Render a Image',
+    14: 'NB2_DISP_14 : OverLay Support'
 }
 # List of Automated test cases
-test_disp_automated_list = [1, 2, 3, 5, 6, 7, 10, 11]
+test_disp_automated_list = [1, 2, 3, 4, 6, 7, 11, 12, 13, 14]
 # List of Sanity test cases
-test_disp_sanity_list = [1, 2, 3, 4, 5]
+test_disp_sanity_list = [1, 2, 3]
 # List of Manual test cases
-test_disp_manual_list = [12, 13]
+test_disp_manual_list = [3, 8, 9]
 
 
 #################################################################################
-# GPU Test Helper Methods                                                      #
+# DISPLAY Test Helper Methods                                                      #
 #################################################################################
-# Helper method to print the GPU test usage
+# Helper method to print the DISPLAY test usage
 def test_disp_print_usage(prog_name):
     print("", flush=True)
     print("Usage: {0} [options]".format(prog_name), flush=True)
     print("  -t <test_approach>     Test case group or the integer value representing the test case", flush=True)
-    print("                         number. Following test case groups are supported GPU:", flush=True)
+    print("                         number. Following test case groups are supported DISPLAY:", flush=True)
     print("                             automated:  Run all the test cases in Automated test group.", flush=True)
     print("                             sanity:     Run all the test cases in Sanity test group.", flush=True)
     print("                             manual:     Run all the test cases in Manual test group.", flush=True)
-    print("  -t <test_number>           GPU_01. Check fb0 Support ", flush=True)
-    print("                             GPU_02. Display Resolution & BPP Info", flush=True)
-    print("                             GPU_03. Generate Color Palette from a Image.", flush=True)
-    print("                             GPU_04. Change Brightness", flush=True)
-    print("                             GPU_05. Alpha Blending", flush=True)
-    print("                             GPU_06. Image Scaling", flush=True)
-    print("                             GPU_07. Display EDID Info", flush=True)
-    print("                             GPU_08. Change Display Resolution", flush=True)
-    print("                             GPU_09. Change Color Depth.", flush=True)
-    print("                             GPU_10. Depth & Pixel Info from Image", flush=True)
-    print("                             GPU_11. Change Image Color Depth ", flush=True)
+    print("  -t <test_number>           NB2_DISP_01. Check fb0 Support ", flush=True)
+    print("                             NB2_DISP_02. Display Interface and Resolution Info", flush=True)
+    print("                             NB2_DISP_03. Render a Image/Program on Display", flush=True)
+    print("                             NB2_DISP_04. Generate Color Palette from a Image.", flush=True)
+    print("                             NB2_DISP_05. Change Brightness", flush=True)
+    print("                             NB2_DISP_06. Alpha Blending", flush=True)
+    print("                             NB2_DISP_07. Image Scaling", flush=True)
+    print("                             NB2_DISP_08. Display EDID Info", flush=True)
+    print("                             NB2_DISP_09. Change Display Resolution", flush=True)
+    print("                             NB2_DISP_10. Change Color Depth.", flush=True)
+    print("                             NB2_DISP_11. Depth & Pixel Info from Image", flush=True)
+    print("                             NB2_DISP_12. Change Image Color Depth ", flush=True)
+    print("                             NB2_DISP_13. Create and Render a Image", flush=True)
+    print("                             NB2_DISP_14. OverLay Support", flush=True)
     print("  -i <iteration>         Allows test Case to execute over a certain Iterations. ", flush=True)
     print("                             -i <iteration_count> where '-i' accepts integer value.", flush=True)
     print("                             -i 10   -> Where test executes 10 iteration.", flush=True)
@@ -94,12 +101,12 @@ def test_disp_print_usage(prog_name):
     print("", flush=True)
 
 
-# Helper method to get the GPU test parameters
+# Helper method to get the DISPLAY test parameters
 def test_disp_get_options(argv):
     global test_disp_setup_params
     global iteration
 
-    # Initialize the GPU test parameters
+    # Initialize the DISPLAY test parameters
     test_disp_setup_params['test_case'] = None
     # test_disp_setup_params['pri_dev'] = ''
     # test_disp_setup_params['sec_dev'] = ''
@@ -108,7 +115,7 @@ def test_disp_get_options(argv):
 
     # Initialize the return value for method
     err_code = testutils.TEST_RESULT_ERROR
-    err_str = 'Unknown Python program failure while executing the test for GPU!'
+    err_str = 'Unknown Python program failure while executing the test for Display!'
 
     try:
         # Get the command line argument lists for the test
@@ -120,7 +127,7 @@ def test_disp_get_options(argv):
                 # Test case group or number
                 if arg.isdigit():
                     param = int(arg)
-                    if param < 1 or param > TOTAL_GPU_TESTS:
+                    if param < 1 or param > TOTAL_DISPLAY_TESTS:
                         test_disp_print_usage(argv[0])
                         err_code = testutils.TEST_RESULT_ERROR
                         err_str = 'Invalid test case number ({0}) for the Display testing!'.format(arg)
@@ -193,7 +200,7 @@ def test_disp_execute_case(test_case):
 
     # Initialize the return value for method
     err_code = testutils.TEST_RESULT_ERROR
-    err_str = 'Unknown Python program failure while executing the test case {0} ({1}) for GPU!' \
+    err_str = 'Unknown Python program failure while executing the test case {0} ({1}) for Display!' \
         .format(test_case, test_disp_test_case_list[test_case])
 
     # Initialize the test case result code and message
@@ -234,7 +241,7 @@ def test_disp_execute_case(test_case):
             for idx in range(1, iteration + 1):
                 testutils.test_logger.info("{0} ═══════════ TEST_ID :: DISP_03 : Test Iteration : {1} ═══════════"
                                            .format(time.asctime(), idx))
-                color_palette()
+                render_program_display()
 
         elif test_case == 4:
             #           Calling the Test Function directly..
@@ -242,7 +249,7 @@ def test_disp_execute_case(test_case):
             for idx in range(1, iteration + 1):
                 testutils.test_logger.info("{0} ═══════════ TEST_ID :: DISP_04 : Test Iteration : {1} ═══════════"
                                            .format(time.asctime(), idx))
-                change_brightness()
+                color_palette()
 
         elif test_case == 5:
             #           Calling the Test Function directly..
@@ -250,7 +257,7 @@ def test_disp_execute_case(test_case):
             for idx in range(1, iteration + 1):
                 testutils.test_logger.info("{0} ═══════════ TEST_ID :: DISP_05 : Test Iteration : {1} ═══════════"
                                            .format(time.asctime(), idx))
-                alpha_blending()
+                change_brightness()
 
         elif test_case == 6:
             #           Calling the Test Function directly..
@@ -258,7 +265,7 @@ def test_disp_execute_case(test_case):
             for idx in range(1, iteration + 1):
                 testutils.test_logger.info("{0} ═══════════ TEST_ID :: DISP_06 : Test Iteration : {1} ═══════════"
                                            .format(time.asctime(), idx))
-                img_scaling()
+                alpha_blending()
 
         elif test_case == 7:
             #           Calling the Test Function directly..
@@ -266,7 +273,7 @@ def test_disp_execute_case(test_case):
             for idx in range(1, iteration + 1):
                 testutils.test_logger.info("{0} ═══════════ TEST_ID :: DISP_07 : Test Iteration : {1} ═══════════"
                                            .format(time.asctime(), idx))
-                get_edid()
+                img_scaling()
 
         elif test_case == 8:
             #           Calling the Test Function directly..
@@ -274,7 +281,7 @@ def test_disp_execute_case(test_case):
             for idx in range(1, iteration + 1):
                 testutils.test_logger.info("{0} ═══════════ TEST_ID :: DISP_08 : Test Iteration : {1} ═══════════"
                                            .format(time.asctime(), idx))
-                change_resolution()
+                get_edid()
 
         elif test_case == 9:
             #           Calling the Test Function directly..
@@ -282,7 +289,7 @@ def test_disp_execute_case(test_case):
             for idx in range(1, iteration + 1):
                 testutils.test_logger.info("{0} ═══════════ TEST_ID :: DISP_09 : Test Iteration : {1} ═══════════"
                                            .format(time.asctime(), idx))
-                depth_change()
+                change_resolution()
 
         elif test_case == 10:
             #           Calling the Test Function directly..
@@ -290,7 +297,7 @@ def test_disp_execute_case(test_case):
             for idx in range(1, iteration + 1):
                 testutils.test_logger.info("{0} ═══════════ TEST_ID :: DISP_10 : Test Iteration : {1} ═══════════"
                                            .format(time.asctime(), idx))
-                get_img_info()
+                depth_change()
 
         elif test_case == 11:
             #           Calling the Test Function directly..
@@ -298,7 +305,31 @@ def test_disp_execute_case(test_case):
             for idx in range(1, iteration + 1):
                 testutils.test_logger.info("{0} ═══════════ TEST_ID :: DISP_11 : Test Iteration : {1} ═══════════"
                                            .format(time.asctime(), idx))
+                get_img_info()
+
+        elif test_case == 12:
+            #           Calling the Test Function directly..
+            #           Test Case to check if the Graphics - Driver is loaded or  not..
+            for idx in range(1, iteration + 1):
+                testutils.test_logger.info("{0} ═══════════ TEST_ID :: DISP_12 : Test Iteration : {1} ═══════════"
+                                           .format(time.asctime(), idx))
                 change_color_depth()
+
+        elif test_case == 13:
+            #           Calling the Test Function directly..
+            #           Test Case to check if the Graphics - Driver is loaded or  not..
+            for idx in range(1, iteration + 1):
+                testutils.test_logger.info("{0} ═══════════ TEST_ID :: DISP_13 : Test Iteration : {1} ═══════════"
+                                           .format(time.asctime(), idx))
+                render_image()
+
+        elif test_case == 14:
+            #           Calling the Test Function directly..
+            #           Test Case to check if the Graphics - Driver is loaded or  not..
+            for idx in range(1, iteration + 1):
+                testutils.test_logger.info("{0} ═══════════ TEST_ID :: DISP_14 : Test Iteration : {1} ═══════════"
+                                           .format(time.asctime(), idx))
+                overlay_support()
 
         else:
             # Unknown test case
@@ -317,7 +348,7 @@ def test_disp_execute_case(test_case):
         err_str = 'Test case completed without any failures'
         testutils.test_logger.debug('%s', err_str)
     finally:
-        # GPU test teardown
+        # DISPLAY test teardown
         try:
             test_disp_teardown()
         except:
@@ -338,12 +369,12 @@ def test_disp_execute_case(test_case):
             raise testutils.TestFailureException(err_code, err_str)
 
 
-# GPU Test Setup
-#   This function does the initial setup required for the GPU, before
+# DISPLAY Test Setup
+#   This function does the initial setup required for the DISPLAY, before
 #   starting the actual test case.
 #
-#   GPU setup has the following functionality:
-#     1. Configures the ports in the required GPU mode.
+#   DISPLAY setup has the following functionality:
+#     1. Configures the ports in the required DISPLAY mode.
 
 
 def test_disp_setup():
@@ -352,49 +383,49 @@ def test_disp_setup():
 
     # Initialize the return value for the method
     err_code = testutils.TEST_RESULT_ERROR
-    err_str = 'Unknown Python program failure while executing the GPU test setup!'
+    err_str = 'Unknown Python program failure while executing the DISPLAY test setup!'
 
     try:
-        # GPU mode parameters
+        # DISPLAY mode parameters
         baud_rate = test_disp_mode_params['baud_rate']
         data_bit_len = test_disp_mode_params['data_bit_len']
         parity = test_disp_mode_params['parity']
         stop_bits = test_disp_mode_params['stop_bits']
-        testutils.test_logger.debug('Setting up GPU with following configurations:')
+        testutils.test_logger.debug('Setting up Display with following configurations:')
         testutils.test_logger.debug('  Baud rate:       %d', baud_rate)
         testutils.test_logger.debug('  Data bit length: %d', data_bit_len)
         testutils.test_logger.debug('  Parity:          %s', parity.capitalize())
         testutils.test_logger.debug('  Stop bits:       %s', stop_bits.upper())
 
     except:
-        swpilot_logger.debug('Failed to setup GPU for the requested mode!')
+        swpilot_logger.debug('Failed to setup DISPLAY for the requested mode!')
         raise testutils.TestFailureException(err_code, err_str)
 
 
-# GPU Test Teardown
-#   This function does the final cleanup required for the GPU, at the end of
+# DISPLAY Test Teardown
+#   This function does the final cleanup required for the DISPLAY, at the end of
 #   the test case (in both successful and failed cases).
 #
-#   GPU teardown has the following functionalities:
+#   DISPLAY teardown has the following functionalities:
 #     1. Does any deconfigurations required for the test.
 def test_disp_teardown():
     global test_disp_setup_params
 
     # Initialize the return value for the method
     err_code = testutils.TEST_RESULT_ERROR
-    err_str = 'Unknown Python program failure while executing the GPU test teardown!'
+    err_str = 'Unknown Python program failure while executing the DISPLAY test teardown!'
 
     try:
-        # GPU mode parameters
+        # DISPLAY mode parameters
         testutils.test_logger.debug('Cleaning-up the resources used for the Display testing')
 
     except:
-        swpilot_logger.debug('Failed to clean-up the GPU test resources!')
+        swpilot_logger.debug('Failed to clean-up the DISPLAY test resources!')
         raise testutils.TestFailureException(err_code, err_str)
 
 
 #################################################################################
-# Main entry point for the GPU test                                            #
+# Main entry point for the DISPLAY test                                            #
 #################################################################################
 def test_disp_main(argv):
     global test_disp_setup_params
@@ -436,7 +467,7 @@ def test_disp_main(argv):
             test_disp_cases_group = False
             test_disp_cases_total = 1
 
-        # Start the GPU test suite
+        # Start the DISPLAY test suite
         if test_disp_cases_group:
             test_msg = '{0} with {1} suite of {2} test case(s)'.format(test_msg,
                                                                        test_disp_setup_params['test_case'].capitalize(),
@@ -453,7 +484,7 @@ def test_disp_main(argv):
         file_data = 'Test_Case_Number,Test_Case_Desc,Test_Result,Test_Err_Code,Test_Result_Desc'
         testutils.test_write_report_file(file_data)
 
-        # Loop through the test cases for GPU
+        # Loop through the test cases for DISPLAY
         for test_index in range(test_disp_cases_total):
             if test_disp_cases_group:
                 if test_disp_setup_params['test_case'] == 'automated':
@@ -512,7 +543,7 @@ def fb0_enabled():
         testutils.test_logger.fatal("{0} : fb0 not available." .format(time.asctime()))
         err_code = testutils.TEST_RESULT_FATAL
         err_str = "{0} : Test Failure - 'fb0' not available in path. " .format(time.asctime())
-        testutils.test_logger.fatal(err_str)
+        testutils.test_logger.fatal(err_code, err_str)
         raise testutils.TestFailureException(err_code, err_str)
 
 
@@ -529,7 +560,10 @@ def get_display_info():
     io_cmd = r'for p in /sys/class/drm/*/status; do con=${p%/status}; echo -n "${con#*/card?-}: "; cat $p; done'
     mod_cmd = r'for i in $(ls -1 /sys/class/drm/*/modes); do echo "$i:"; cat $i; done'
     testutils.test_logger.info("{0} : Trying to fetch, Display interfaces and Info..." .format(time.asctime()))
-    try:
+    f_path = "/dev/fb0"
+    testutils.test_logger.info("{0} : Checking fbo status..".format(time.asctime()))
+    if os.path.exists(f_path):
+        testutils.test_logger.info("{0} : fb0 found in path (/dev/fb0) in the System.".format(time.asctime()))
         testutils.test_logger.info("{0} : Checking for Display configs.." .format(time.asctime()))
         fb_info = subprocess.check_output("sudo fbset", shell=True)
         io_info = subprocess.check_output(io_cmd, shell=True)
@@ -543,16 +577,91 @@ def get_display_info():
         err_code = testutils.TEST_RESULT_PASS
         err_str = "{0} : All the Display Configs are available.".format(time.asctime())
         testutils.test_case_update_result(err_code, err_str)
-    except subprocess.CalledProcessError:
-        testutils.test_logger.info("{0} : fbset command not enabled. Exiting Test." .format(time.asctime()))
+    else:
+        testutils.test_logger.fatal("{0} : fb0 not available.".format(time.asctime()))
         err_code = testutils.TEST_RESULT_FATAL
-        err_str = "{0} : fbset Test Execution failure.".format(time.asctime())
-        testutils.test_case_update_result(err_code, err_str)
+        err_str = "{0} : Test Failure - 'fb0' not available in path. ".format(time.asctime())
+        testutils.test_logger.fatal(err_code, err_str)
+        raise testutils.TestFailureException(err_code, err_str)
 
 
 # # #
 #
-#   03. Check's External Connectivity..
+#   03. Check External Connectivity..
+#   Checks if the 'fb0' in supported on devices /dev/fb0 directory..
+#   Renders a  -> Image on Display,
+#              -> Performs Facial recog'tion from camera.
+#
+# # #
+
+def render_program_display():
+
+    try:
+        import cv2
+
+        f_path = "/dev/fb0"
+        testutils.test_logger.info("{0} : Checking fbo status..".format(time.asctime()))
+
+        if os.path.exists(f_path):
+
+            testutils.test_logger.info("{0} : Triggering Camera Output." .format(time.asctime()))
+            cap = cv2.VideoCapture(0)
+
+            testutils.test_logger.info("{0} : Checking for Face Cascade .xml files..".format(time.asctime()))
+
+            # Create the haar cascade
+            if os.path.isfile("Contents/CV/haarcascade_frontalface_default.xml"):
+                testutils.test_logger.info("{0} : Face Cascade file found!" .format(time.asctime()))
+                faceCascade = cv2.CascadeClassifier("Contents/CV/haarcascade_frontalface_default.xml")
+
+                while (True):
+                    # Capture frame-by-frame
+                    ret, frame = cap.read()
+
+                    # Our operations on the frame come here
+                    gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+
+                    # Detect faces in the image
+                    faces = faceCascade.detectMultiScale(
+                        gray,
+                        scaleFactor=1.1,
+                        minNeighbors=5,
+                        minSize=(30, 30)
+                        # flags = cv2.CV_HAAR_SCALE_IMAGE
+                    )
+
+                    testutils.test_logger.info("{0} : Detected - {1} faces!".format(time.asctime(), len(faces)))
+
+                    # Draw a rectangle around the faces
+                    for (x, y, w, h) in faces:
+                        cv2.rectangle(frame, (x, y), (x + w, y + h), (0, 255, 0), 2)
+
+                    # Display the resulting frame
+                    cv2.imshow('Camera', frame)
+                    if cv2.waitKey(1) & 0xFF == ord('q'):
+                        break
+
+                # When everything done, release the capture
+                cap.release()
+                cv2.destroyAllWindows()
+        else:
+            testutils.test_logger.fatal("{0} : fb0 not available.".format(time.asctime()))
+            err_code = testutils.TEST_RESULT_FATAL
+            err_str = "{0} : Test Failure - 'fb0' not available in path. ".format(time.asctime())
+            testutils.test_logger.fatal(err_code, err_str)
+            raise testutils.TestFailureException(err_code, err_str)
+
+    except ImportError:
+        testutils.test_logger.error("{0} : OpenCV package not available.".format(time.asctime()))
+        err_code = testutils.TEST_RESULT_ERROR
+        err_str = "{0} : Test Failure - OpenCV package not available to Test. ".format(time.asctime())
+        testutils.test_logger.error(err_code, err_str)
+        raise testutils.TestFailureException(err_code, err_str)
+
+
+# # #
+#
+#   04. Check's External Connectivity..
 #   Checks if the 'fb0' in supported on devices /dev/fb0 directory..
 #   If fb0 is supported then performs below operations :
 #                       -> Open a Image and read the colors from the images.
@@ -590,7 +699,7 @@ def color_palette():
 
 # # #
 #
-#   04. Check's External Connectivity..
+#   05. Check's External Connectivity..
 #   Checks if the 'fb0' in supported on devices /dev/fb0 directory..
 #   If fb0 is supported then performs below operations :
 #                       -> To perform the control of brightness via backlight
@@ -624,7 +733,7 @@ def change_brightness():
 
 # # #
 #
-#   05. Check's External Connectivity..
+#   06. Check's External Connectivity..
 #   Checks if the 'fb0' in supported on devices /dev/fb0 directory..
 #   If fb0 is supported then performs below operations :
 #   ->  process of overlaying a foreground image with transparency over a
@@ -690,7 +799,7 @@ def alpha_blending():
 
 # # #
 #
-#   06. Check's External Connectivity..
+#   07. Check's External Connectivity..
 #   Checks if the 'fb0' in supported on devices /dev/fb0 directory..
 #   If fb0 is supported then performs below operations :
 #   ->  Takes a input image and then performs the below functions:
@@ -712,7 +821,7 @@ def img_scaling():
         testutils.test_logger.info("{0} : Source Image path found.." .format(time.asctime()))
         src = cv2.imread(img_path, cv2.IMREAD_UNCHANGED)
 
-        scale_per = [50, 75, 125]
+        scale_per = [50, 75, 150]
 
         for scale in scale_per:
 
@@ -738,7 +847,7 @@ def img_scaling():
 
 # # #
 #
-#   07. Check's External Connectivity..
+#   08. Check's External Connectivity..
 #   Checks if the 'fb0' in supported on devices /dev/fb0 directory..
 #   If fb0 is supported then performs below operations :
 #   ->  Checks the Connected Display and performs the following.:
@@ -774,7 +883,7 @@ def get_edid():
 
 # # #
 #
-#   08. Check's External Connectivity..
+#   09. Check's External Connectivity..
 #   Checks if the 'fb0' in supported on devices /dev/fb0 directory..
 #   If fb0 is supported then performs below operations :
 #   ->  Checks the Connected Display and performs the following.:
@@ -789,12 +898,12 @@ def change_resolution():
     testutils.test_logger.skip("{0} : Skipping the Test...".format(time.asctime()))
     err_code = testutils.TEST_RESULT_SKIP
     err_str = "{0} : Skipping the Test, Cannot Execute Program!.".format(time.asctime())
-    testutils.test_case_update_result(err_code, err_str)
+    raise testutils.TestFailureException(err_code, err_str)
 
 
 # # #
 #
-#   09. Check's External Connectivity..
+#   10. Check's External Connectivity..
 #   Checks if the 'fb0' in supported on devices /dev/fb0 directory..
 #   If fb0 is supported then performs below operations :
 #   ->  Checks the Connected Display and performs the following.:
@@ -809,12 +918,12 @@ def depth_change():
     testutils.test_logger.skip("{0} : Skipping the Test...".format(time.asctime()))
     err_code = testutils.TEST_RESULT_SKIP
     err_str = "{0} : Skipping the Test, Cannot Execute Program!.".format(time.asctime())
-    testutils.test_case_update_result(err_code, err_str)
+    raise testutils.TestFailureException(err_code, err_str)
 
 
 # # #
 #
-#   10. Check's External Connectivity..
+#   11. Check's External Connectivity..
 #   Checks if the 'fb0' in supported on devices /dev/fb0 directory..
 #   If fb0 is supported then performs below operations :
 #   ->  Checks the Connected Display and performs the following.:
@@ -850,7 +959,7 @@ def get_img_info():
 
 # # #
 #
-#   11. Check's External Connectivity..
+#   12. Check's External Connectivity..
 #   Checks if the 'fb0' in supported on devices /dev/fb0 directory..
 #   If fb0 is supported then performs below operations :
 #   ->  Checks the Connected Display and performs the following.:
@@ -903,6 +1012,126 @@ def change_color_depth():
         err_code = testutils.TEST_RESULT_ERROR
         err_str = "{0} : Image not found - Source Image Not Found in Path!.".format(time.asctime())
         raise testutils.TestFailureException(err_code, err_str)
+
+
+# # #
+#
+#   13. Check's External Connectivity..
+#   Checks if the 'fb0' in supported on devices /dev/fb0 directory..
+#   If fb0 is supported then performs below operations :
+#   ->  Checks the Connected Display and performs the following.:
+#          -> Creates a Animated 2D Image and Renders it on the display.
+#
+# # #
+
+def render_image():
+
+    images = []
+
+    testutils.test_logger.info("{0} : Setting up Parameters." .format(time.asctime()))
+
+    width = 600
+    center = width // 2
+    color_1 = (0, 153, 153)
+    color_2 = (0, 255, 255)
+    max_radius = int(center * 1.5)
+    step = 8
+
+    testutils.test_logger.info("{0} : Trying to Import necessary libraries.. ".format(time.asctime()))
+    try:
+        from PIL import Image, ImageDraw
+        import webbrowser
+
+        testutils.test_logger.info("{0} : Libraries available..".format(time.asctime()))
+
+        for i in range(0, max_radius, step):
+            im = Image.new('RGB', (width, width), color_1)
+            draw = ImageDraw.Draw(im)
+            draw.ellipse((center - i, center - i, center + i, center + i), fill=color_2)
+            images.append(im)
+
+        for i in range(0, max_radius, step):
+            im = Image.new('RGB', (width, width), color_2)
+            draw = ImageDraw.Draw(im)
+            draw.ellipse((center - i, center - i, center + i, center + i), fill=color_1)
+            images.append(im)
+
+        testutils.test_logger.info("{0} : Trying to save image. ".format(time.asctime()))
+
+        images[0].save("Image.gif",
+                       save_all=True, append_images=images[1:], optimize=False, duration=40, loop=0)
+
+        if os.path.exists(os.getcwd() + "/Image.gif"):
+            testutils.test_logger.info("{0} : Image saved Successfully.." .format(time.asctime()))
+            #webbrowser.open("Image.gif")
+        else:
+            testutils.test_logger.error("{0} : Image generation failed. " .format(time.asctime()))
+            err_code = testutils.TEST_RESULT_FATAL
+            err_str = "{0} : Image generation failed.".format(time.asctime())
+            raise testutils.TestFailureException(err_code, err_str)
+
+    except ImportError:
+        testutils.test_logger.fatal("{0} : Cannot Import Required Test Packages." .format(time.asctime()))
+        err_code = testutils.TEST_RESULT_ERROR
+        err_str = "{0} : Cannot Import Required Test Packages.".format(time.asctime())
+        raise testutils.TestFailureException(err_code, err_str)
+
+
+# # #
+#
+#   14. Check's External Connectivity..
+#   Checks if the 'fb0' in supported on devices /dev/fb0 directory..
+#   If fb0 is supported then performs below operations :
+#   ->  Checks the Connected Display and performs the following.:
+#          -> Creates a Overlap image from 2 images.
+#
+# # #
+
+def overlay_support():
+
+    img1_path = os.getcwd() + "/Contents/Overlay/1.jpg"
+    img2_path = os.getcwd() + "/Contents/Overlay/2.jpg"
+
+    testutils.test_logger.info("{0} : Checking if the Source Images are available. " .format(time.asctime()))
+
+    if os.path.exists(img1_path) and os.path.exists(img2_path):
+
+        try:
+            from PIL import Image
+            testutils.test_logger.info("{0} : Source Path Available in path." .format(time.asctime()))
+            bg_img = Image.open(img1_path)
+            ov_img = Image.open(img2_path)
+
+            bg_img = bg_img.convert("RGBA")
+            ov_img = ov_img.convert("RGBA")
+
+            testutils.test_logger.info("{0} : Blending the source images.. " .format(time.asctime()))
+
+            overlay_img = Image.blend(bg_img, ov_img, 0.5)
+
+            overlay_img.save("Overlay.png", 'PNG')
+
+            if os.path.exists(os.getcwd() + "/Overlay.png"):
+                testutils.test_logger.info("{0} : Overlay Image Successfully created." .format(time.asctime()))
+                testutils.test_logger.info("{0} : Overlay Image location : {1}" .format(time.asctime(),
+                                                                                        os.getcwd()+"/Overlay.png"))
+            else:
+                testutils.test_logger.fatal("{0} : Cannot Import Required Test Packages.".format(time.asctime()))
+                err_code = testutils.TEST_RESULT_FATAL
+                err_str = "{0} : Cannot Import Required Test Packages.".format(time.asctime())
+                raise testutils.TestFailureException(err_code, err_str)
+
+        except ImportError:
+            testutils.test_logger.fatal("{0} : Cannot Import Required Test Packages.".format(time.asctime()))
+            err_code = testutils.TEST_RESULT_FATAL
+            err_str = "{0} : Cannot Import Required Test Packages.".format(time.asctime())
+            raise testutils.TestFailureException(err_code, err_str)
+    else:
+        testutils.test_logger.error("{0} : Source Overlay images not available.".format(time.asctime()))
+        err_code = testutils.TEST_RESULT_ERROR
+        err_str = "{0} : Source overlay images are not available.".format(time.asctime())
+        raise testutils.TestFailureException(err_code, err_str)
+
 
 
 # Main functional Block..

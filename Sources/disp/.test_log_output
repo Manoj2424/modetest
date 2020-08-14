@@ -1,16 +1,79 @@
-TEST_DEBUG: test_disp.py:412:test_disp_main(): Using the random seed of 1595494038 for the Python tests
-TEST_INFO: test_disp.py:446:test_disp_main(): Starting the Display - IP validation with Single test case
-TEST_INFO: test_disp.py:208:test_disp_execute_case(): Starting the execution of Display test case 6 (DISP_06 : Image Scaling)
-TEST_INFO: test_disp.py:260:test_disp_execute_case(): Thu Jul 23 14:17:18 2020 ═══════════ TEST_ID :: DISP_06 : Test Iteration : 1 ═══════════
-TEST_INFO: test_disp.py:708:img_scaling(): Thu Jul 23 14:17:18 2020 : Checking is Source Image is Available.. 
-TEST_INFO: test_disp.py:712:img_scaling(): Thu Jul 23 14:17:18 2020 : Source Image path found..
-TEST_INFO: test_disp.py:719:img_scaling(): Thu Jul 23 14:17:18 2020 : Scaling Image to : 50%
-TEST_INFO: test_disp.py:726:img_scaling(): Thu Jul 23 14:17:18 2020 : Writing the Scaled image to the output Image.
-TEST_INFO: test_disp.py:729:img_scaling(): Thu Jul 23 14:17:18 2020 : Successfully written the Output image in location : Retro_50.png
-TEST_INFO: test_disp.py:719:img_scaling(): Thu Jul 23 14:17:18 2020 : Scaling Image to : 75%
-TEST_INFO: test_disp.py:726:img_scaling(): Thu Jul 23 14:17:18 2020 : Writing the Scaled image to the output Image.
-TEST_INFO: test_disp.py:729:img_scaling(): Thu Jul 23 14:17:18 2020 : Successfully written the Output image in location : Retro_75.png
-TEST_DEBUG: test_disp.py:318:test_disp_execute_case(): Test case completed without any failures
-TEST_DEBUG: test_disp.py:389:test_disp_teardown(): Cleaning-up the resources used for the Display testing
-TEST_DEBUG: test_disp.py:483:test_disp_main(): Successfully completed the Display - IP validation with Single test case
-TEST_INFO: test_disp.py:492:test_disp_main(): Display - IP validation with Single test case completed successfully with return code 0 (Pass)
+TEST_DEBUG: test_disp.py:443:test_disp_main(): Using the random seed of 1597395756 for the Python tests
+TEST_INFO: test_disp.py:477:test_disp_main(): Starting the Display - IP validation with Sanity suite of 2 test case(s)
+TEST_INFO: test_disp.py:215:test_disp_execute_case(): Starting the execution of Display test case 1 (NB2_DISP_01 : Check fb0 Support.)
+TEST_INFO: test_disp.py:223:test_disp_execute_case(): Fri Aug 14 14:32:36 2020 ═══════════ TEST_ID :: DISP_01 : Test Iteration : 1 ═══════════
+TEST_INFO: test_disp.py:536:fb0_enabled(): Fri Aug 14 14:32:36 2020 : Checking fbo status..
+TEST_INFO: test_disp.py:538:fb0_enabled(): Fri Aug 14 14:32:36 2020 : fb0 found in path (/dev/fb0) in the System.
+TEST_DEBUG: test_disp.py:349:test_disp_execute_case(): Test case completed without any failures
+TEST_DEBUG: test_disp.py:420:test_disp_teardown(): Cleaning-up the resources used for the Display testing
+TEST_INFO: test_disp.py:215:test_disp_execute_case(): Starting the execution of Display test case 2 (NB2_DISP_02 : Display Interface and Resolution Info)
+TEST_INFO: test_disp.py:233:test_disp_execute_case(): Fri Aug 14 14:32:36 2020 ═══════════ TEST_ID :: DISP_02 : Test Iteration : 1 ═══════════
+TEST_INFO: test_disp.py:562:get_display_info(): Fri Aug 14 14:32:36 2020 : Trying to fetch, Display interfaces and Info...
+TEST_INFO: test_disp.py:564:get_display_info(): Fri Aug 14 14:32:36 2020 : Checking fbo status..
+TEST_INFO: test_disp.py:566:get_display_info(): Fri Aug 14 14:32:36 2020 : fb0 found in path (/dev/fb0) in the System.
+TEST_INFO: test_disp.py:567:get_display_info(): Fri Aug 14 14:32:36 2020 : Checking for Display configs..
+TEST_INFO: test_disp.py:571:get_display_info(): Fri Aug 14 14:32:36 2020 : fbset display details. 
+TEST_INFO: test_disp.py:572:get_display_info(): 
+mode "1920x1080"
+    geometry 1920 1080 1920 1080 32
+    timings 0 0 0 0 0 0 0
+    accel true
+    rgba 8/16,8/8,8/0,0/0
+endmode
+
+
+TEST_INFO: test_disp.py:573:get_display_info(): Fri Aug 14 14:32:36 2020 : Available IO display Interfaces. 
+TEST_INFO: test_disp.py:574:get_display_info(): DP-1: disconnected
+HDMI-A-1: connected
+HDMI-A-2: disconnected
+eDP-1: connected
+
+TEST_INFO: test_disp.py:575:get_display_info(): Fri Aug 14 14:32:36 2020 : Display Mode Info. 
+TEST_INFO: test_disp.py:576:get_display_info(): /sys/class/drm/card0-DP-1/modes:
+/sys/class/drm/card0-eDP-1/modes:
+1920x1080
+1920x1080
+/sys/class/drm/card0-HDMI-A-1/modes:
+1920x1080
+1920x1080
+1920x1080
+1920x1080
+1920x1080
+1680x1050
+1600x900
+1280x1024
+1280x1024
+1440x900
+1280x800
+1152x864
+1280x720
+1280x720
+1280x720
+1280x720
+1280x720
+1024x768
+1024x768
+1024x768
+832x624
+800x600
+800x600
+800x600
+800x600
+720x576
+720x576
+720x480
+720x480
+720x480
+720x480
+640x480
+640x480
+640x480
+640x480
+640x480
+720x400
+/sys/class/drm/card0-HDMI-A-2/modes:
+
+TEST_DEBUG: test_disp.py:349:test_disp_execute_case(): Test case completed without any failures
+TEST_DEBUG: test_disp.py:420:test_disp_teardown(): Cleaning-up the resources used for the Display testing
+TEST_DEBUG: test_disp.py:514:test_disp_main(): Successfully completed the Display - IP validation with Sanity suite of 2 test case(s)
+TEST_INFO: test_disp.py:523:test_disp_main(): Display - IP validation with Sanity suite of 2 test case(s) completed successfully with return code 0 (Pass)

@@ -1,3 +1,4 @@
-:: Test report for Display - IP validation with Single test case ::
+:: Test report for Display - IP validation with Sanity suite of 2 test case(s) ::
 Test_Case_Number,Test_Case_Desc,Test_Result,Test_Err_Code,Test_Result_Desc
-6,DISP_06 : Image Scaling,Pass,0,Test case completed without any failures
+1,NB2_DISP_01 : Check fb0 Support.,Pass,0,Test case completed without any failures
+2,NB2_DISP_02 : Display Interface and Resolution Info,Pass,0,Test case completed without any failures
