@@ -1,7 +1,7 @@
 #!/usr/bin/python
 
 #################################################################################
-# File Name: test_gpu.py                                                        #
+# File Name: test_disp.py                                                        #
 # Description: Python test entry file for validating DISPLAY                    #
 # Author: Ganesh Shanubhogue (DevSys)                                           #
 # Last Modified: 10-Feb-2020                                                    #
@@ -15,10 +15,6 @@ import getopt
 import os
 import subprocess
 import time
-import logging
-import signal
-import cv2
-import numpy as np
 
 
 # Import test specific utilities
@@ -30,7 +26,7 @@ import testutils
 #################################################################################
 # DISPLAY Constant Definitions                                                     #
 #################################################################################
-TOTAL_DISPLAY_TESTS = 20  # Total number of tests for DISPLAY IP
+TOTAL_DISPLAY_TESTS = 50  # Total number of tests for DISPLAY IP
 DISP_TEST_C_BINARY_FILE = './bin/test_disp'  # DISPLAY test binary file for executing test cases implemented in C
 # TEST_DISPLAY_SUPP_BAUD_RATE    = [9600, 19200, 38400, 57600, 115200]
 # TEST_DISPLAY_SUPP_DATA_BITS    = [5, 6, 7, 8]
@@ -38,27 +34,44 @@ DISP_TEST_C_BINARY_FILE = './bin/test_disp'  # DISPLAY test binary file for exec
 # TEST_DISPLAY_SUPP_STOP_BITS    = ['1p0', '1p5', '2p0']
 
 #################################################################################
-# DISPLAY Global Variables                                                         #
+# DISPLAY Global Variables                                                      #
 #################################################################################
 test_disp_setup_params = {}
 test_disp_mode_params = {}
 iteration = 1
 # List of supported test cases for DISPLAY
 test_disp_test_case_list = {
-    1: 'NB2_DISP_01 : Check fb0 Support.',
-    2: 'NB2_DISP_02 : Display Interface and Resolution Info',
-    3: 'NB2_DISP_03 : Render a Image/Program on Display',
-    4: 'NB2_DISP_04 : Generate Color Palette from a Image.',
-    5: 'NB2_DISP_05 : Change Brightness',
-    6: 'NB2_DISP_06 : Alpha Blending',
-    7: 'NB2_DISP_07 : Image Scaling',
-    8: 'NB2_DISP_08 : Display EDID Info',
-    9: 'NB2_DISP_09 : Change Display Resolution',
-    10: 'NB2_DISP_10 : Change Color Depth',
-    11: 'NB2_DISP_11 : Depth & Pixel Info from Image',
-    12: 'NB2_DISP_12 : Change Image Color Bit',
-    13: 'NB2_DISP_13 : Create and Render a Image',
-    14: 'NB2_DISP_14 : OverLay Support'
+    1: 'NB2_DISP_01 (NB2_34) : Render Image on Display with Framebuffer.',
+    2: 'NB2_DISP_02 (NB2_35 & NB2_36) : Display Interface, BPP and Resolution Info.',
+    3: 'NB2_DISP_03 : Check Support for fb0',
+    4: 'NB2_DISP_04 : Render a String on Framebuffer',
+    5: 'NB2_DISP_05 : Write dmesg output to display buffer.',
+    6: 'NB2_DISP_06 : Fb-Test (Color Palette)',
+    7: 'NB2_DISP_07 : Fb-Test (Red - Non Palette)',
+    8: 'NB2_DISP_08 : Fb-Test (Green - Non Palette)',
+    9: 'NB2_DISP_09 : Fb-Test (Blue - Non Palette)',
+    10: 'NB2_DISP_10 : Fb-Test (White - Non Palette)',
+    11: 'NB2_DISP_11 : FB-Mark (SierpiSki)',
+    12: 'NB2_DISP_12 : FB-Mark (Mandrolbrot)',
+    13: 'NB2_DISP_13 : FB-Mark (Rectagle)',
+    14: 'NB2_DISP_14 : Render Image on FB',
+    15: 'NB2_DISP_15 : Render Image on FB',
+    16: 'NB2_DISP_16 : Render Image on FB',
+    17: 'NB2_DISP_17 : Render Image on FB.',
+    18: 'NB2_DISP_18 : Display Rotate Framebuffer',
+    19: 'NB2_DISP_19 : Display backlight or Brightness Control',
+    20: 'NB2_DISP_20 : Modeset',
+    21: 'NB2_DISP_21 : Modeset - Double buffer',
+    22: 'NB2_DISP_22 : Modeset - vSync',
+    23: 'NB2_DISP_23 : DRM Test – Read Display Frequency (vbltest)',
+    24: 'NB2_DISP_24 : DRM Test – Change display resolution and frequency',
+    25: 'NB2_DISP_25 : DRM Test – Support for Hardware Cursor.',
+    26: 'NB2_DISP_26 : DRM Test – Support for vertical Sync.',
+    27: 'NB2_DISP_27 : DRM Test – Validate support for Overlay.',
+    28: 'NB2_DISP_28 : DRM Test – Support for Alpha Blending.',
+    29: 'NB2_DISP_29 : DRM Test – vSync Page Flip with Resolution Change',
+    30: 'NB2_DISP_30 : DRM Test – Hardware Cursor with Resolution Change',
+    31: 'NB2_DISP_31 : DRM Test – HW Cursor + vSync Page Flip with Resolution Change'
 }
 # List of Automated test cases
 test_disp_automated_list = [1, 2, 3, 4, 6, 7, 11, 12, 13, 14]
@@ -80,20 +93,37 @@ def test_disp_print_usage(prog_name):
     print("                             automated:  Run all the test cases in Automated test group.", flush=True)
     print("                             sanity:     Run all the test cases in Sanity test group.", flush=True)
     print("                             manual:     Run all the test cases in Manual test group.", flush=True)
-    print("  -t <test_number>           NB2_DISP_01. Check fb0 Support ", flush=True)
-    print("                             NB2_DISP_02. Display Interface and Resolution Info", flush=True)
-    print("                             NB2_DISP_03. Render a Image/Program on Display", flush=True)
-    print("                             NB2_DISP_04. Generate Color Palette from a Image.", flush=True)
-    print("                             NB2_DISP_05. Change Brightness", flush=True)
-    print("                             NB2_DISP_06. Alpha Blending", flush=True)
-    print("                             NB2_DISP_07. Image Scaling", flush=True)
-    print("                             NB2_DISP_08. Display EDID Info", flush=True)
-    print("                             NB2_DISP_09. Change Display Resolution", flush=True)
-    print("                             NB2_DISP_10. Change Color Depth.", flush=True)
-    print("                             NB2_DISP_11. Depth & Pixel Info from Image", flush=True)
-    print("                             NB2_DISP_12. Change Image Color Depth ", flush=True)
-    print("                             NB2_DISP_13. Create and Render a Image", flush=True)
-    print("                             NB2_DISP_14. OverLay Support", flush=True)
+    print("  -t <test_number>           NB2_DISP_01. (NB2_34) : Render Image on Display with Framebuffer", flush=True)
+    print("                             NB2_DISP_02. (NB2_35 & NB2_36) : Display Interface, BPP and Resolution Info", flush=True)
+    print("                             NB2_DISP_03. Check Support for fb0", flush=True)
+    print("                             NB2_DISP_04. Render a String on Framebuffer", flush=True)
+    print("                             NB2_DISP_05. Write dmesg output to display buffer", flush=True)
+    print("                             NB2_DISP_06. Fb-Test (Color Palette)", flush=True)
+    print("                             NB2_DISP_07. Fb-Test (Red - Non Palette)", flush=True)
+    print("                             NB2_DISP_08. Fb-Test (Green - Non Palette)", flush=True)
+    print("                             NB2_DISP_09. Fb-Test (Blue - Non Palette)", flush=True)
+    print("                             NB2_DISP_10. Fb-Test (White - Non Palette).", flush=True)
+    print("                             NB2_DISP_11. FB-Mark (SierpiSki)", flush=True)
+    print("                             NB2_DISP_12. FB-Mark (Mandrolbrot)", flush=True)
+    print("                             NB2_DISP_13. FB-Mark (Rectagle)", flush=True)
+    print("                             NB2_DISP_14. Render Image on FB", flush=True)
+    print("                             NB2_DISP_15. Render Image on FB", flush=True)
+    print("                             NB2_DISP_16. Render Image on FB.", flush=True)
+    print("                             NB2_DISP_17. Render Image on FB.", flush=True)
+    print("                             NB2_DISP_18. Display Rotate Framebuffer.", flush=True)
+    print("                             NB2_DISP_19. Display backlight or Brightness Control.", flush=True)
+    print("                             NB2_DISP_20. Modeset.", flush=True)
+    print("                             NB2_DISP_21. Modeset - Double buffer", flush=True)
+    print("                             NB2_DISP_22. Modeset - vSync", flush=True)
+    print("                             NB2_DISP_23. DRM Test – Read Display Frequency (vbltest)", flush=True)
+    print("                             NB2_DISP_24. DRM Test – Change display resolution and frequency", flush=True)
+    print("                             NB2_DISP_25. DRM Test – Support for Hardware Cursor", flush=True)
+    print("                             NB2_DISP_26. DRM Test – Support for vertical Sync.", flush=True)
+    print("                             NB2_DISP_27. DRM Test – Validate support for Overlay.", flush=True)
+    print("                             NB2_DISP_28. DRM Test – Support for Alpha Blending.", flush=True)
+    print("                             NB2_DISP_29. DRM Test – vSync Page Flip with Resolution Change", flush=True)
+    print("                             NB2_DISP_30. DRM Test – Hardware Cursor with Resolution Change", flush=True)
+    print("                             NB2_DISP_31. DRM Test – HW Cursor + vSync Page Flip with Resolution Change", flush=True)    
     print("  -i <iteration>         Allows test Case to execute over a certain Iterations. ", flush=True)
     print("                             -i <iteration_count> where '-i' accepts integer value.", flush=True)
     print("                             -i 10   -> Where test executes 10 iteration.", flush=True)
@@ -219,7 +249,7 @@ def test_disp_execute_case(test_case):
             #           Calling the Test Function directly..
             #           Test Case to check if the Graphics - Driver is loaded or  not..
             for idx in range(1, iteration + 1):
-                testutils.test_logger.info("{0} ═══════════ TEST_ID :: DISP_01 : Test Iteration : {1} ═══════════"
+                testutils.test_logger.info("{0} ═══════════ TEST_ID :: NB2_DISP_01 : Test Iteration : {1} ═══════════"
                                            .format(time.asctime(), idx))
                 fb0_enabled()
             #           Once called, returns an Error Code with the Error String
@@ -229,7 +259,7 @@ def test_disp_execute_case(test_case):
             #           Calling the Test Function directly..
             #           Test Case to check if the Graphics - Driver is loaded or  not..
             for idx in range(1, iteration + 1):
-                testutils.test_logger.info("{0} ═══════════ TEST_ID :: DISP_02 : Test Iteration : {1} ═══════════"
+                testutils.test_logger.info("{0} ═══════════ TEST_ID :: NB2_DISP_02 : Test Iteration : {1} ═══════════"
                                            .format(time.asctime(), idx))
                 get_display_info()
             #           Once called, returns an Error Code with the Error String
@@ -239,97 +269,390 @@ def test_disp_execute_case(test_case):
             #           Calling the Test Function directly..
             #           Test Case to check if the Graphics - Driver is loaded or  not..
             for idx in range(1, iteration + 1):
-                testutils.test_logger.info("{0} ═══════════ TEST_ID :: DISP_03 : Test Iteration : {1} ═══════════"
+                testutils.test_logger.info("{0} ═══════════ TEST_ID :: NB2_DISP_03 : Test Iteration : {1} ═══════════"
                                            .format(time.asctime(), idx))
-                render_program_display()
+                fb0_enabled()
+            #           Once called, returns an Error Code with the Error String
+            #           Pass or Fail Message..
 
         elif test_case == 4:
             #           Calling the Test Function directly..
             #           Test Case to check if the Graphics - Driver is loaded or  not..
             for idx in range(1, iteration + 1):
-                testutils.test_logger.info("{0} ═══════════ TEST_ID :: DISP_04 : Test Iteration : {1} ═══════════"
-                                           .format(time.asctime(), idx))
-                color_palette()
+                testutils.test_logger.info("{0} ═══════════ TEST_ID :: NB2_DISP_04 : Test Iteration : {1} ═══════════"
+                        .format(time.asctime(), idx))
+                fb_string()
+                #random_screen()
+            #           Once called, returns an Error Code with the Error String
+            #           Pass or Fail Message..
 
         elif test_case == 5:
             #           Calling the Test Function directly..
             #           Test Case to check if the Graphics - Driver is loaded or  not..
             for idx in range(1, iteration + 1):
-                testutils.test_logger.info("{0} ═══════════ TEST_ID :: DISP_05 : Test Iteration : {1} ═══════════"
-                                           .format(time.asctime(), idx))
-                change_brightness()
+                testutils.test_logger.info("{0} ═══════════ TEST_ID :: NB2_DISP_05 : Test Iteration : {1} ═══════════"
+                        .format(time.asctime(), idx))
+                log_to_console()
 
         elif test_case == 6:
             #           Calling the Test Function directly..
             #           Test Case to check if the Graphics - Driver is loaded or  not..
             for idx in range(1, iteration + 1):
-                testutils.test_logger.info("{0} ═══════════ TEST_ID :: DISP_06 : Test Iteration : {1} ═══════════"
+                testutils.test_logger.info("{0} ═══════════ TEST_ID :: NB2_DISP_06 : Test Iteration : {1} ═══════════"
                                            .format(time.asctime(), idx))
-                alpha_blending()
+                fbtest()
+            #           Once called, returns an Error Code with the Error String
+            #           Pass or Fail Message..
 
         elif test_case == 7:
             #           Calling the Test Function directly..
-            #           Test Case to check if the Graphics - Driver is loaded or  not..
+            #           Test Case to check if the Graphics - Driver is loaded or not..
             for idx in range(1, iteration + 1):
-                testutils.test_logger.info("{0} ═══════════ TEST_ID :: DISP_07 : Test Iteration : {1} ═══════════"
-                                           .format(time.asctime(), idx))
-                img_scaling()
+                testutils.test_logger.info("{0} ═══════════ TEST_ID :: NB2_DISP_07 : Test Iteration : {1} ═══════════"
+                        .format(time.asctime(), idx))
+                fbtest_param("-r")
+            #           Once called, returns an Error Code with the Error String
+            #           Pass or Fail Message..
 
         elif test_case == 8:
             #           Calling the Test Function directly..
             #           Test Case to check if the Graphics - Driver is loaded or  not..
             for idx in range(1, iteration + 1):
-                testutils.test_logger.info("{0} ═══════════ TEST_ID :: DISP_08 : Test Iteration : {1} ═══════════"
-                                           .format(time.asctime(), idx))
-                get_edid()
+                testutils.test_logger.info("{0} ═══════════ TEST_ID :: NB2_DISP_08 : Test Iteration : {1} ═══════════"
+                        .format(time.asctime(), idx))
+                fbtest_param("-g")
+            #           Once called, returns an Error Code with the Error String
+            #           Pass or Fail Message..
 
         elif test_case == 9:
             #           Calling the Test Function directly..
             #           Test Case to check if the Graphics - Driver is loaded or  not..
             for idx in range(1, iteration + 1):
-                testutils.test_logger.info("{0} ═══════════ TEST_ID :: DISP_09 : Test Iteration : {1} ═══════════"
-                                           .format(time.asctime(), idx))
-                change_resolution()
+                testutils.test_logger.info("{0} ═══════════ TEST_ID :: NB2_DISP_09 : Test Iteration : {1} ═══════════"
+                        .format(time.asctime(), idx))
+                fbtest_param("-b")
+            #           Once called, returns an Error Code with the Error String
+            #           Pass or Fail Message..
 
         elif test_case == 10:
             #           Calling the Test Function directly..
-            #           Test Case to check if the Graphics - Driver is loaded or  not..
+            #           Test Case to check if the Graphics - Driver is loaded or not..
             for idx in range(1, iteration + 1):
-                testutils.test_logger.info("{0} ═══════════ TEST_ID :: DISP_10 : Test Iteration : {1} ═══════════"
-                                           .format(time.asctime(), idx))
-                depth_change()
+                testutils.test_logger.info("{0} ═══════════ TEST_ID :: NB2_DISP_10 : Test Iteration : {1} ═══════════"
+                        .format(time.asctime(), idx))
+                fbtest_param("-w")
+            #           Once called, returns an Error Code with the Error String
+            #           Pass or Fail Message..
 
         elif test_case == 11:
             #           Calling the Test Function directly..
-            #           Test Case to check if the Graphics - Driver is loaded or  not..
+            #           Test Case to check if the Graphics - Driver is loaded or not..
             for idx in range(1, iteration + 1):
-                testutils.test_logger.info("{0} ═══════════ TEST_ID :: DISP_11 : Test Iteration : {1} ═══════════"
-                                           .format(time.asctime(), idx))
-                get_img_info()
+                testutils.test_logger.info("{0} ═══════════ TEST_ID :: NB2_DISP_11 : Test Iteration : {1} ═══════════"
+                        .format(time.asctime(), idx))
+                if check_display():
+                    wd, ht = 600, 400
+                    posx, posy = 0, 50
+                    fb_sierpinski(wd, ht, posx, posy)
+                else:
+                    wd, ht = 480, 500
+                    posx, posy = 0, 50
+                    fb_sierpinski(wd, ht, posx, posy)
+            #           Once called, returns an Error Code with the Error String
+            #           Pass or Fail Message..
 
         elif test_case == 12:
             #           Calling the Test Function directly..
-            #           Test Case to check if the Graphics - Driver is loaded or  not..
+            #           Test Case to check if the Graphics - Driver is loaded or not..
             for idx in range(1, iteration + 1):
-                testutils.test_logger.info("{0} ═══════════ TEST_ID :: DISP_12 : Test Iteration : {1} ═══════════"
-                                           .format(time.asctime(), idx))
-                change_color_depth()
+                testutils.test_logger.info("{0} ═══════════ TEST_ID :: NB2_DISP_12 : Test Iteration : {1} ═══════════"
+                        .format(time.asctime(), idx))
+                if check_display():
+                    wd, ht = 700, 479
+                    posx, posy = 0, 0
+                    fb_mandelbrot(wd, ht, posx, posy)
+                else:
+                    wd, ht = 480, 800
+                    posx, posy = 0, 100
+                    fb_mandelbrot(wd, ht, posx, posy)
+            #           Once called, returns an Error Code with the Error String
+            #           Pass or Fail Message..
 
         elif test_case == 13:
             #           Calling the Test Function directly..
-            #           Test Case to check if the Graphics - Driver is loaded or  not..
+            #           Test Case to check if the Graphics - Driver is loaded or not..
             for idx in range(1, iteration + 1):
-                testutils.test_logger.info("{0} ═══════════ TEST_ID :: DISP_13 : Test Iteration : {1} ═══════════"
-                                           .format(time.asctime(), idx))
-                render_image()
+                testutils.test_logger.info("{0} ═══════════ TEST_ID :: NB2_DISP_13 : Test Iteration : {1} ═══════════"
+                        .format(time.asctime(), idx))
+                if check_display():
+                    wd, ht = 750, 475
+                    posx, posy = 0, 0
+                    fb_rectangle(wd, ht, posx, posy)
+                else:
+                    wd, ht = 480, 800
+                    posx, posy = 0, 0
+                    fb_rectangle(wd, ht, posx, posy)
+            #           Once called, returns an Error Code with the Error String
+            #           Pass or Fail Message..
 
         elif test_case == 14:
             #           Calling the Test Function directly..
-            #           Test Case to check if the Graphics - Driver is loaded or  not..
+            #           Test Case to check if the Graphics - Driver is loaded or not..
             for idx in range(1, iteration + 1):
-                testutils.test_logger.info("{0} ═══════════ TEST_ID :: DISP_14 : Test Iteration : {1} ═══════════"
+                testutils.test_logger.info("{0} ═══════════ TEST_ID :: NB2_DISP_14 : Test Iteration : {1} ═══════════"
+                        .format(time.asctime(), idx))
+                bpp = 'cat /sys/devices/platform/display-subsystem/graphics/fb0/bits_per_pixel'
+                testutils.test_logger.info("{0} Checking Display BPP Value." .format(time.asctime()))
+                bpp_val = subprocess.check_output(bpp, shell=True).decode('utf-8')
+                testutils.test_logger.info("{0} Current Display BPP Value - {1}" .format(time.asctime(), bpp_val))
+                if check_display():
+                    if int(bpp_val) == 32:
+                        render_images("LVDS", '/opt/lvds/32bpp/')
+                    elif int(bpp_val) == 24:
+                        render_images("LVDS", '/opt/lvds/24bpp/')    
+                    elif int(bpp_val) == 16:
+                        render_images("LVDS", '/opt/lvds/16bpp/')
+                    else:
+                        testutils.test_logger.error("{0} : Cannot locate LVDS image directory.".format(time.asctime()))
+                        err_code = testutils.TEST_RESULT_ERROR
+                        err_str = "{0} : Test Execution Failure..".format(time.asctime())
+                        raise testutils.TestFailureException(err_code, err_str)
+                else:
+                    if int(bpp_val) == 32:
+                        render_images("MIPI", '/opt/mipi/32bpp/')
+                    elif int(bpp_val) == 24:
+                        render_images("MIPI", '/opt/mipi/24bpp/')    
+                    elif int(bpp_val) == 16:
+                        render_images("MIPI", '/opt/mipi/16bpp/')
+                    else:
+                        testutils.test_logger.error("{0} : Cannot locate MIPI image directory.".format(time.asctime()))
+                        err_code = testutils.TEST_RESULT_ERROR
+                        err_str = "{0} : Test Execution Failure..".format(time.asctime())
+                        raise testutils.TestFailureException(err_code, err_str)
+            #           Once called, returns an Error Code with the Error String
+            #           Pass or Fail Message..
+
+        elif test_case == 15:
+            #           Calling the Test Function directly..
+            #           Test Case to check if the Graphics - Driver is loaded or not..
+            for idx in range(1, iteration + 1):
+                testutils.test_logger.info("{0} ═══════════ TEST_ID :: NB2_DISP_15 : Test Iteration : {1} ═══════════"
+                        .format(time.asctime(), idx))
+                bpp = 'cat /sys/devices/platform/display-subsystem/graphics/fb0/bits_per_pixel'
+                testutils.test_logger.info("{0} Checking Display BPP Value." .format(time.asctime()))
+                bpp_val = subprocess.check_output(bpp, shell=True).decode('utf-8')
+                testutils.test_logger.info("{0} Current Display BPP Value - {1}" .format(time.asctime(), bpp_val))
+                if check_display():
+                    if int(bpp_val) == 32:
+                        render_images("LVDS", '/opt/lvds/32bpp/')
+                    elif int(bpp_val) == 24:
+                        render_images("LVDS", '/opt/lvds/24bpp/')    
+                    elif int(bpp_val) == 16:
+                        render_images("LVDS", '/opt/lvds/16bpp/')
+                    else:
+                        testutils.test_logger.error("{0} : Cannot locate LVDS image directory.".format(time.asctime()))
+                        err_code = testutils.TEST_RESULT_ERROR
+                        err_str = "{0} : Test Execution Failure..".format(time.asctime())
+                        raise testutils.TestFailureException(err_code, err_str)
+                else:
+                    if int(bpp_val) == 32:
+                        render_images("MIPI", '/opt/mipi/32bpp/')
+                    elif int(bpp_val) == 24:
+                        render_images("MIPI", '/opt/mipi/24bpp/')    
+                    elif int(bpp_val) == 16:
+                        render_images("MIPI", '/opt/mipi/16bpp/')
+                    else:
+                        testutils.test_logger.error("{0} : Cannot locate MIPI image directory.".format(time.asctime()))
+                        err_code = testutils.TEST_RESULT_ERROR
+                        err_str = "{0} : Test Execution Failure..".format(time.asctime())
+                        raise testutils.TestFailureException(err_code, err_str)
+            #           Once called, returns an Error Code with the Error String
+            #           Pass or Fail Message..
+            
+        elif test_case == 16:
+            #           Calling the Test Function directly..
+            #           Test Case to check if the Graphics - Driver is loaded or not..
+            for idx in range(1, iteration + 1):
+                testutils.test_logger.info("{0} ═══════════ TEST_ID :: NB2_DISP_16 : Test Iteration : {1} ═══════════"
+                        .format(time.asctime(), idx))
+                bpp = 'cat /sys/devices/platform/display-subsystem/graphics/fb0/bits_per_pixel'
+                testutils.test_logger.info("{0} Checking Display BPP Value." .format(time.asctime()))
+                bpp_val = subprocess.check_output(bpp, shell=True).decode('utf-8')
+                testutils.test_logger.info("{0} Current Display BPP Value - {1}" .format(time.asctime(), bpp_val))
+                if check_display():
+                    if int(bpp_val) == 32:
+                        render_images("LVDS", '/opt/lvds/32bpp/')
+                    elif int(bpp_val) == 24:
+                        render_images("LVDS", '/opt/lvds/24bpp/')    
+                    elif int(bpp_val) == 16:
+                        render_images("LVDS", '/opt/lvds/16bpp/')
+                    else:
+                        testutils.test_logger.error("{0} : Cannot locate LVDS image directory.".format(time.asctime()))
+                        err_code = testutils.TEST_RESULT_ERROR
+                        err_str = "{0} : Test Execution Failure..".format(time.asctime())
+                        raise testutils.TestFailureException(err_code, err_str)
+                else:
+                    if int(bpp_val) == 32:
+                        render_images("MIPI", '/opt/mipi/32bpp/')
+                    elif int(bpp_val) == 24:
+                        render_images("MIPI", '/opt/mipi/24bpp/')    
+                    elif int(bpp_val) == 16:
+                        render_images("MIPI", '/opt/mipi/16bpp/')
+                    else:
+                        testutils.test_logger.error("{0} : Cannot locate MIPI image directory.".format(time.asctime()))
+                        err_code = testutils.TEST_RESULT_ERROR
+                        err_str = "{0} : Test Execution Failure..".format(time.asctime())
+                        raise testutils.TestFailureException(err_code, err_str)
+            #           Once called, returns an Error Code with the Error String
+            #           Pass or Fail Message..      
+
+        elif test_case == 17:
+            #           Calling the Test Function directly..
+            #           Test Case to check if the Graphics - Driver is loaded or not..
+            for idx in range(1, iteration + 1):
+                testutils.test_logger.info("{0} ═══════════ TEST_ID :: NB2_DISP_17 : Test Iteration : {1} ═══════════"
+                        .format(time.asctime(), idx))
+                bpp = 'cat /sys/devices/platform/display-subsystem/graphics/fb0/bits_per_pixel'
+                testutils.test_logger.info("{0} Checking Display BPP Value." .format(time.asctime()))
+                bpp_val = subprocess.check_output(bpp, shell=True).decode('utf-8')
+                testutils.test_logger.info("{0} Current Display BPP Value - {1}" .format(time.asctime(), bpp_val))
+                if check_display():
+                    if int(bpp_val) == 32:
+                        render_images("LVDS", '/opt/lvds/32bpp/')
+                    elif int(bpp_val) == 24:
+                        render_images("LVDS", '/opt/lvds/24bpp/')    
+                    elif int(bpp_val) == 16:
+                        render_images("LVDS", '/opt/lvds/16bpp/')
+                    else:
+                        testutils.test_logger.error("{0} : Cannot locate LVDS image directory.".format(time.asctime()))
+                        err_code = testutils.TEST_RESULT_ERROR
+                        err_str = "{0} : Test Execution Failure..".format(time.asctime())
+                        raise testutils.TestFailureException(err_code, err_str)
+                else:
+                    if int(bpp_val) == 32:
+                        render_images("MIPI", '/opt/mipi/32bpp/')
+                    elif int(bpp_val) == 24:
+                        render_images("MIPI", '/opt/mipi/24bpp/')    
+                    elif int(bpp_val) == 16:
+                        render_images("MIPI", '/opt/mipi/16bpp/')
+                    else:
+                        testutils.test_logger.error("{0} : Cannot locate MIPI image directory.".format(time.asctime()))
+                        err_code = testutils.TEST_RESULT_ERROR
+                        err_str = "{0} : Test Execution Failure..".format(time.asctime())
+                        raise testutils.TestFailureException(err_code, err_str)
+            #           Once called, returns an Error Code with the Error String
+            #           Pass or Fail Message.. 
+        elif test_case == 18:
+            #           Calling the Test Function directly..
+            #           Test Case to check if the Graphics - Driver is loaded or not..
+            for idx in range(1, iteration + 1):
+                testutils.test_logger.info("{0} ═══════════ TEST_ID :: NB2_DISP_18 : Test Iteration : {1} ═══════════"
+                        .format(time.asctime(), idx))
+                rotate_screen()
+                
+        elif test_case == 19:
+            #           Calling the Test Function directly..
+            #           Test Case to check if the Graphics - Driver is loaded or not..
+            for idx in range(1, iteration + 1):
+                testutils.test_logger.info("{0} ═══════════ TEST_ID :: NB2_DISP_19 : Test Iteration : {1} ═══════════"
                                            .format(time.asctime(), idx))
-                overlay_support()
+                change_brightness()
+
+        elif test_case == 20:
+            #           Calling the Test Function directly..
+            #           Test Case to check if the Graphics - Driver is loaded or not..
+            for idx in range(1, iteration + 1):
+                testutils.test_logger.info("{0} ═══════════ TEST_ID :: NB2_DISP_20 : Test Iteration : {1} ═══════════"
+                                           .format(time.asctime(), idx))
+                modeset()
+
+        elif test_case == 21:
+            #           Calling the Test Function directly..
+            #           Test Case to check if the Graphics - Driver is loaded or not..
+            for idx in range(1, iteration + 1):
+                testutils.test_logger.info("{0} ═══════════ TEST_ID :: NB2_DISP_21 : Test Iteration : {1} ═══════════"
+                                           .format(time.asctime(), idx))
+                modeset_double_buff()
+
+        elif test_case == 22:
+            #           Calling the Test Function directly..
+            #           Test Case to check if the Graphics - Driver is loaded or not..
+            for idx in range(1, iteration + 1):
+                testutils.test_logger.info("{0} ═══════════ TEST_ID :: NB2_DISP_22 : Test Iteration : {1} ═══════════"
+                                           .format(time.asctime(), idx))
+                modeset_vsync()
+
+        elif test_case == 23:
+            #           Calling the Test Function directly..
+            #           Test Case to check if the Graphics - Driver is loaded or not..
+            for idx in range(1, iteration + 1):
+                testutils.test_logger.info("{0} ═══════════ TEST_ID :: NB2_DISP_23 : Test Iteration : {1} ═══════════"
+                                           .format(time.asctime(), idx))
+                change_brightness()
+
+        elif test_case == 24:
+            #           Calling the Test Function directly..
+            #           Test Case to check if the Graphics - Driver is loaded or not..
+            for idx in range(1, iteration + 1):
+                testutils.test_logger.info("{0} ═══════════ TEST_ID :: NB2_DISP_24 : Test Iteration : {1} ═══════════"
+                                           .format(time.asctime(), idx))
+                change_brightness()
+
+        elif test_case == 25:
+            #           Calling the Test Function directly..
+            #           Test Case to check if the Graphics - Driver is loaded or not..
+            for idx in range(1, iteration + 1):
+                testutils.test_logger.info("{0} ═══════════ TEST_ID :: NB2_DISP_25 : Test Iteration : {1} ═══════════"
+                                           .format(time.asctime(), idx))
+                change_brightness()
+
+        elif test_case == 26:
+            #           Calling the Test Function directly..
+            #           Test Case to check if the Graphics - Driver is loaded or not..
+            for idx in range(1, iteration + 1):
+                testutils.test_logger.info("{0} ═══════════ TEST_ID :: NB2_DISP_26 : Test Iteration : {1} ═══════════"
+                                           .format(time.asctime(), idx))
+                change_brightness()
+
+        elif test_case == 27:
+            #           Calling the Test Function directly..
+            #           Test Case to check if the Graphics - Driver is loaded or not..
+            for idx in range(1, iteration + 1):
+                testutils.test_logger.info("{0} ═══════════ TEST_ID :: NB2_DISP_27 : Test Iteration : {1} ═══════════"
+                                           .format(time.asctime(), idx))
+                change_brightness()
+
+        elif test_case == 28:
+            #           Calling the Test Function directly..
+            #           Test Case to check if the Graphics - Driver is loaded or not..
+            for idx in range(1, iteration + 1):
+                testutils.test_logger.info("{0} ═══════════ TEST_ID :: NB2_DISP_28 : Test Iteration : {1} ═══════════"
+                                           .format(time.asctime(), idx))
+                change_brightness()
+
+        elif test_case == 29:
+            #           Calling the Test Function directly..
+            #           Test Case to check if the Graphics - Driver is loaded or not..
+            for idx in range(1, iteration + 1):
+                testutils.test_logger.info("{0} ═══════════ TEST_ID :: NB2_DISP_29 : Test Iteration : {1} ═══════════"
+                                           .format(time.asctime(), idx))
+                change_brightness()
+                
+        elif test_case == 30:
+            #           Calling the Test Function directly..
+            #           Test Case to check if the Graphics - Driver is loaded or not..
+            for idx in range(1, iteration + 1):
+                testutils.test_logger.info("{0} ═══════════ TEST_ID :: NB2_DISP_30 : Test Iteration : {1} ═══════════"
+                                           .format(time.asctime(), idx))
+                change_brightness()
+
+        elif test_case == 31:
+            #           Calling the Test Function directly..
+            #           Test Case to check if the Graphics - Driver is loaded or not..
+            for idx in range(1, iteration + 1):
+                testutils.test_logger.info("{0} ═══════════ TEST_ID :: NB2_DISP_31 : Test Iteration : {1} ═══════════"
+                                           .format(time.asctime(), idx))
+                change_brightness()
 
         else:
             # Unknown test case
@@ -524,6 +847,163 @@ def test_disp_main(argv):
         return testutils.test_suite_result_code
 
 
+#########################################################################################
+#
+#
+#   ModeTest Parser Functions..
+#           * To Compute Output Functions..
+#           * Get Display Connection status
+#           * Get CRTCs connection status..
+#           * Gets vbltest connection status..
+#           * Get DRM driver status..
+#
+#
+#
+#################################################################################################
+
+def check_drm_status():
+    try:
+        drm = subprocess.check_output("modetest -d | grep done", shell=True)
+        testutils.test_logger.info("{0} : Checking DRM Driver available status for ModeTest.." .format(time.asctime()))
+        if b'done' in drm:
+            testutils.test_logger.info("{0} : DRM Driver available.".format(time.asctime()))
+            testutils.test_logger.info("{0} : DRM Driver - \n {1}".format(time.asctime(), drm.decode('utf-8')))
+            return True
+        else:
+            testutils.test_logger.info("{0} : DRM Driver Not Found!".format(time.asctime()))
+            return False
+    except subprocess.CalledProcessError:
+        testutils.test_logger.error("{0} : Failed to Execute Command." .format(time.asctime()))
+        return False
+
+
+def vbltest_status():
+    try:
+        vbl = subprocess.check_output("vbltest -s | grep done", shell=True)
+        testutils.test_logger.info("{0} : Checking DRM Driver available status for Vbltest.." .format(time.asctime()))
+        if b'done' in vbl:
+            testutils.test_logger.info("{0} : DRM Driver available.".format(time.asctime()))
+            testutils.test_logger.info("{0} : DRM Supported Driver - {1}".format(time.asctime(), vbl.decode('utf-8')))
+            return True
+        else:
+            testutils.test_logger.info("{0} : DRM Driver Not Found!".format(time.asctime()))
+            return False
+    except subprocess.CalledProcessError:
+        testutils.test_logger.error("{0} : Failed to Execute Command." .format(time.asctime()))
+        return False
+
+
+def hdmi_status():
+    try:
+        dis_status = subprocess.check_output("cat /sys/class/drm/card1-HDMI-A-1/status", shell=True)
+        testutils.test_logger.info("{0} : Check Display Connection status.." .format(time.asctime()))
+        if str(dis_status) == "b'connected\\n'":
+            testutils.test_logger.info("{0} : HDMI display Interface - {1}.".format(time.asctime(),
+                                                                            dis_status.decode('utf-8')))
+            return True
+        else:
+            testutils.test_logger.info("{0} : HDMI display Interface : {1}.".format(time.asctime(),
+                                                                                    dis_status.decode('utf-8')))
+            return False
+    except subprocess.CalledProcessError:
+        testutils.test_logger.error("{0} : Failed to Execute HDMI Status Command.")
+        return False
+
+
+def connection_status():
+    try:
+        conn_info = subprocess.check_output("modetest | grep connected", shell=True)
+        crtc = subprocess.check_output("modetest | grep -A3 CRTCs", shell=True)
+        testutils.test_logger.info("{0} : Checking Active Display Connected, and CRTC "
+                                   "Details..".format(time.asctime()))
+        if b"connected" in conn_info and b"CRTCs" in crtc:
+            testutils.test_logger.info("{0} : Display Connection and CRTC data Available.".format(time.asctime()))
+            return conn_info, crtc
+        else:
+            testutils.test_logger.info("{0} : No Active Displays or CRTC found.".format(time.asctime()))
+            return False, False
+    except subprocess.CalledProcessError:
+        testutils.test_logger.error("{0} : Failed to Execute Command." .format(time.asctime()))
+        return False, False
+
+
+def get_connector_and_crtc_modeprint():
+    try:
+        connector_info = subprocess.check_output("modeprint vc4 | grep -A1 Connector:", shell=True)
+        crtc_info = subprocess.check_output("modeprint vc4 | grep -A1 Crtc", shell=True)
+
+        if b"Connector:" in connector_info and b"id" in crtc_info:
+            testutils.test_logger.info("{0} : Display Connection and CRTC data Available.".format(time.asctime()))
+            connector = connector_info.decode('utf-8')
+            connector = connector[-3:-1]
+            testutils.test_logger.info("{0} : Connector ID : {1}" .format(time.asctime(), connector))
+            crtc_id = crtc_info.decode('utf-8')
+            crtc_id = crtc_id[-3:-1]
+            testutils.test_logger.info("{0} : CRTC ID : {1}".format(time.asctime(), crtc_id))
+            return connector, crtc_id
+        else:
+            testutils.test_logger.info("{0} : No Active Displays or CRTC found.".format(time.asctime()))
+            return False, False
+    except subprocess.CalledProcessError:
+        testutils.test_logger.error("{0} : Failed to Execute Command.".format(time.asctime()))
+        return False, False
+
+
+def get_plane_id():
+    try:
+        connector_info = subprocess.check_output("modeprint vc4 | grep -A1 Connector:", shell=True)
+        crtc_info = subprocess.check_output("modeprint vc4 | grep -A1 Crtc", shell=True)
+
+        if b"Connector:" in connector_info and b"id" in crtc_info:
+            testutils.test_logger.info("{0} : Display Connection and CRTC data Available.".format(time.asctime()))
+            try:
+                testutils.test_logger.info("{0} : Trying to get Display Plane ID." .format(time.asctime()))
+                plane = subprocess.check_output("modetest -M vc4 | grep -A2 Planes:", shell=True)
+                plane_id = plane[58:-36].decode('utf-8')
+                testutils.test_logger.info("{0} : Verifying not Null Value.., "
+                                           "Fetched Plane ID : '{1}'".format(time.asctime(), plane_id))
+                if plane_id != "":
+                    testutils.test_logger.info("{0} : Connected Display Plane ID : {1}" .format(time.asctime(), plane_id))
+                    return plane_id
+                else:
+                    testutils.test_logger.error("{0} : Invalid Plane ID located : Null '{1}''".format(time.asctime(),
+                                                                                                     plane_id))
+                    return False
+            except subprocess.CalledProcessError:
+                testutils.test_logger.error("{0} : Failed to Execute Command.".format(time.asctime()))
+                return False
+
+    except subprocess.CalledProcessError:
+        testutils.test_logger.error("{0} : Failed to Execute Command.".format(time.asctime()))
+        return False
+
+
+def is_kmscube_installed():
+    try:
+        apt_list = subprocess.check_output("dpkg --list  | grep kmscube", shell=True)
+        testutils.test_logger.info("{0} : Checking if KMSCube available, to validate..".format(time.asctime()))
+        if b"kmscube" in apt_list:
+            testutils.test_logger.info("{0} : KMSCube available in the System.".format(time.asctime()))
+            return True
+        else:
+            testutils.test_logger.info("{0} : No Active Displays or CRTC found.".format(time.asctime()))
+            return False
+    except subprocess.CalledProcessError:
+        testutils.test_logger.error("{0} : Failed to Execute Command." .format(time.asctime()))
+        return False
+
+
+def fb_modes_available():
+    fb_modes = "/etc/fb.modes"
+    testutils.test_logger.info("{0} : Checking if Framebuffer Modes are Available.." .format(time.asctime()))
+    if os.path.exists(fb_modes):
+        testutils.test_logger.info("{0} : Framebuffer Modes available in the System.".format(time.asctime()))
+        return True
+    else:
+        testutils.test_logger.info("{0} : Framebuffer Modes not found.".format(time.asctime()))
+        return False
+
+
 # # #
 #
 #   01. Check fb0 enabled..
@@ -533,17 +1013,17 @@ def test_disp_main(argv):
 
 def fb0_enabled():
     path = "/dev/fb0"
-    testutils.test_logger.info("{0} : Checking fbo status.." .format(time.asctime()))
+    testutils.test_logger.info("{0} : Checking fb0 status.." .format(time.asctime()))
     if os.path.exists(path):
         testutils.test_logger.info("{0} : fb0 found in path (/dev/fb0) in the System." .format(time.asctime()))
         err_code = testutils.TEST_RESULT_PASS
-        err_str = "{0} : fb0 Character file available.." .format(time.asctime())
+        err_str = "{0} : fb0 Framebuffer Device available." .format(time.asctime())
         testutils.test_case_update_result(err_code, err_str)
+        return True
     else:
         testutils.test_logger.fatal("{0} : fb0 not available." .format(time.asctime()))
         err_code = testutils.TEST_RESULT_FATAL
-        err_str = "{0} : Test Failure - 'fb0' not available in path. " .format(time.asctime())
-        testutils.test_logger.fatal(err_code, err_str)
+        err_str = "{0} : Test Failure - 'fb0' Framebuffer not available in path. " .format(time.asctime())
         raise testutils.TestFailureException(err_code, err_str)
 
 
@@ -565,23 +1045,32 @@ def get_display_info():
     if os.path.exists(f_path):
         testutils.test_logger.info("{0} : fb0 found in path (/dev/fb0) in the System.".format(time.asctime()))
         testutils.test_logger.info("{0} : Checking for Display configs.." .format(time.asctime()))
-        fb_info = subprocess.check_output("sudo fbset", shell=True)
-        io_info = subprocess.check_output(io_cmd, shell=True)
-        mode_info = subprocess.check_output(mod_cmd, shell=True)
-        testutils.test_logger.info("{0} : fbset display details. " .format(time.asctime()))
-        testutils.test_logger.info(fb_info.decode('utf-8'))
-        testutils.test_logger.info("{0} : Available IO display Interfaces. ".format(time.asctime()))
-        testutils.test_logger.info(io_info.decode('utf-8'))
-        testutils.test_logger.info("{0} : Display Mode Info. ".format(time.asctime()))
-        testutils.test_logger.info(mode_info.decode('utf-8'))
-        err_code = testutils.TEST_RESULT_PASS
-        err_str = "{0} : All the Display Configs are available.".format(time.asctime())
-        testutils.test_case_update_result(err_code, err_str)
+        try:
+            start_time = time.time()
+            fb_info = subprocess.check_output("fbset", shell=True)
+            io_info = subprocess.check_output(io_cmd, shell=True)
+            mode_info = subprocess.check_output(mod_cmd, shell=True)
+            end_time = time.time()
+            testutils.test_logger.info("{0} : fbset display details. " .format(time.asctime()))
+            testutils.test_logger.info(fb_info.decode('utf-8'))
+            testutils.test_logger.info("{0} : Available IO display Interfaces. ".format(time.asctime()))
+            testutils.test_logger.info(io_info.decode('utf-8'))
+            testutils.test_logger.info("{0} : Display Mode Info. ".format(time.asctime()))
+            testutils.test_logger.info(mode_info.decode('utf-8'))
+            err_code = testutils.TEST_RESULT_PASS
+            err_str = "{0} : All the Display Configs are available.".format(time.asctime())
+            testutils.test_logger.info("{0} : Total Execution time - {1} secs..".format(time.asctime(),
+                                                                                        end_time-start_time))
+            testutils.test_case_update_result(err_code, err_str)
+        except subprocess.CalledProcessError:
+            testutils.test_logger.fatal("{0} : Test Execution Failure, Cannot proceed..".format(time.asctime()))
+            err_code = testutils.TEST_RESULT_FATAL
+            err_str = "{0} : Test Execution Failure, Cannot proceed.. ".format(time.asctime())
+            raise testutils.TestFailureException(err_code, err_str)
     else:
         testutils.test_logger.fatal("{0} : fb0 not available.".format(time.asctime()))
         err_code = testutils.TEST_RESULT_FATAL
         err_str = "{0} : Test Failure - 'fb0' not available in path. ".format(time.asctime())
-        testutils.test_logger.fatal(err_code, err_str)
         raise testutils.TestFailureException(err_code, err_str)
 
 
@@ -589,549 +1078,507 @@ def get_display_info():
 #
 #   03. Check External Connectivity..
 #   Checks if the 'fb0' in supported on devices /dev/fb0 directory..
-#   Renders a  -> Image on Display,
-#              -> Performs Facial recog'tion from camera.
+#   Prints the -> Display Resolution,
+#              -> Display Supported Interfaces, and their status.
 #
 # # #
 
-def render_program_display():
-
-    try:
-        import cv2
-
-        f_path = "/dev/fb0"
-        testutils.test_logger.info("{0} : Checking fbo status..".format(time.asctime()))
-
-        if os.path.exists(f_path):
-
-            testutils.test_logger.info("{0} : Triggering Camera Output." .format(time.asctime()))
-            cap = cv2.VideoCapture(0)
-
-            testutils.test_logger.info("{0} : Checking for Face Cascade .xml files..".format(time.asctime()))
-
-            # Create the haar cascade
-            if os.path.isfile("Contents/CV/haarcascade_frontalface_default.xml"):
-                testutils.test_logger.info("{0} : Face Cascade file found!" .format(time.asctime()))
-                faceCascade = cv2.CascadeClassifier("Contents/CV/haarcascade_frontalface_default.xml")
-
-                while (True):
-                    # Capture frame-by-frame
-                    ret, frame = cap.read()
-
-                    # Our operations on the frame come here
-                    gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
-
-                    # Detect faces in the image
-                    faces = faceCascade.detectMultiScale(
-                        gray,
-                        scaleFactor=1.1,
-                        minNeighbors=5,
-                        minSize=(30, 30)
-                        # flags = cv2.CV_HAAR_SCALE_IMAGE
-                    )
-
-                    testutils.test_logger.info("{0} : Detected - {1} faces!".format(time.asctime(), len(faces)))
-
-                    # Draw a rectangle around the faces
-                    for (x, y, w, h) in faces:
-                        cv2.rectangle(frame, (x, y), (x + w, y + h), (0, 255, 0), 2)
-
-                    # Display the resulting frame
-                    cv2.imshow('Camera', frame)
-                    if cv2.waitKey(1) & 0xFF == ord('q'):
-                        break
-
-                # When everything done, release the capture
-                cap.release()
-                cv2.destroyAllWindows()
-        else:
-            testutils.test_logger.fatal("{0} : fb0 not available.".format(time.asctime()))
-            err_code = testutils.TEST_RESULT_FATAL
-            err_str = "{0} : Test Failure - 'fb0' not available in path. ".format(time.asctime())
-            testutils.test_logger.fatal(err_code, err_str)
-            raise testutils.TestFailureException(err_code, err_str)
-
-    except ImportError:
-        testutils.test_logger.error("{0} : OpenCV package not available.".format(time.asctime()))
-        err_code = testutils.TEST_RESULT_ERROR
-        err_str = "{0} : Test Failure - OpenCV package not available to Test. ".format(time.asctime())
-        testutils.test_logger.error(err_code, err_str)
-        raise testutils.TestFailureException(err_code, err_str)
-
-
-# # #
-#
-#   04. Check's External Connectivity..
-#   Checks if the 'fb0' in supported on devices /dev/fb0 directory..
-#   If fb0 is supported then performs below operations :
-#                       -> Open a Image and read the colors from the images.
-#                       -> Then create a color palette of all the colors read from the image.
-#                       -> Once the Image is read displays it to the user.
-#
-# # #
-
-def color_palette():
-    img = "RC.png"
-    img_path = "Contents/" + img
-    testutils.test_logger.info("{0} : Looking for the Image.".format(time.asctime()))
-    if os.path.exists(img_path):
-        testutils.test_logger.info("{0} : Image found and reading the color.".format(time.asctime()))
+def log_to_console():
+    testutils.test_logger.info("{0} : Checking if Framebuffer device (fb0) is available.".format(time.asctime()))
+    if fb0_enabled:
+        testutils.test_logger.info("{0} : Framebuffer (fb0) device is available.".format(time.asctime()))
+        cmd = "dmesg > /dev/tty1"
+        testutils.test_logger.info("{0} : Proceeding test execution...".format(time.asctime()))
         try:
-            color_palette = subprocess.check_output("extcolors {0}" .format(img_path), shell=True)
-            testutils.test_logger.info("R | G | B ::: Color Palette Details : \n" + color_palette.decode())
-            for file in os.listdir():
-                if file.startswith(img.replace(".png", "")):
-                    testutils.test_logger.info("{0} : Color Palette Generate - " + file)
-                    err_code = testutils.TEST_RESULT_PASS
-                    err_str = "{0} : Color Palette Generated successfully.,".format(time.asctime())
-                    testutils.test_case_update_result(err_code, err_str)
+            ret = subprocess.call(cmd, shell=True)
+            if ret == 0:
+                testutils.test_logger.info("{0} : Test completed successfully..".format(time.asctime()))
+            else:
+                testutils.test_logger.fatal("{0} : Test Execution failure.".format(time.asctime()))
+                err_code = testutils.TEST_RESULT_FATAL
+                err_str = "{0} : Test Execution Failure..".format(time.asctime())
+                raise testutils.TestFailureException(err_code, err_str)
         except subprocess.CalledProcessError:
-            testutils.test_logger.error("{0} : Execution Error, Try again.,, " .format(time.asctime()))
-            err_code = testutils.TEST_RESULT_ERROR
-            err_str = "{0} : Execution Error, Try again.,,".format(time.asctime())
+            testutils.test_logger.fatal("{0} : Test Cmd Execution Failure, Cannot proceed..".format(time.asctime()))
+            err_code = testutils.TEST_RESULT_FATAL
+            err_str = "{0} : Test Cmd Execution Failure, Cannot proceed..".format(time.asctime())
             raise testutils.TestFailureException(err_code, err_str)
     else:
-        testutils.test_logger.fatal("{0} : File not found - Cannot locate file.." .format(time.asctime()))
+        testutils.test_logger.fatal("{0} : fb0 not available.".format(time.asctime()))
         err_code = testutils.TEST_RESULT_FATAL
-        err_str = "{0} :  File not found - Cannot locate file..".format(time.asctime())
+        err_str = "{0} : Test Failure - 'fb0' not available in path. ".format(time.asctime())
         raise testutils.TestFailureException(err_code, err_str)
 
 
 # # #
 #
-#   05. Check's External Connectivity..
+#   04. Check External Connectivity..
 #   Checks if the 'fb0' in supported on devices /dev/fb0 directory..
-#   If fb0 is supported then performs below operations :
-#                       -> To perform the control of brightness via backlight
+#   Prints the -> Display Resolution,
+#              -> Display Supported Interfaces, and their status.
 #
 # # #
 
-def change_brightness():
-    path = "/sys/class/backlight/intel_backlight/brightness"
-    testutils.test_logger.info("{0} : Trying to change backlight brightness." .format(time.asctime()))
-    backlight_range = [400, 1500, 6000, 3000, 400]
-    if os.path.exists(path):
-        testutils.test_logger.info("{0} : Supporting files available, proceeding to switch.." .format(time.asctime()))
-        for brightness in backlight_range:
+def random_screen():
+    testutils.test_logger.info("{0} : Checking if Framebuffer device (fb0) is available.".format(time.asctime()))
+    if fb0_enabled:
+        testutils.test_logger.info("{0} : Framebuffer (fb0) device is available.".format(time.asctime()))
+        urand = "dd if=/dev/urandom of=/dev/fb0"
+        clear = "dd if=/dev/zero of=/dev/fb0"
+        testutils.test_logger.info("{0} : Proceeding test execution.".format(time.asctime()))
+        try:
+            testutils.test_logger.info("{0} : Printing Random Data on the Display - {1}".format(time.asctime(), urand))
+            urand_ret = subprocess.call(urand, shell=True)
+            time.sleep(5)
+            testutils.test_logger.info("{0} : Clear the Display Screen - {1}".format(time.asctime(), clear))
+            clear_ret = subprocess.call(urand, shell=True)
+            if urand_ret and clear_ret == 0:
+                testutils.test_logger.info("{0} : Test completed successfully..".format(time.asctime()))
+            else:
+                testutils.test_logger.fatal("{0} : Test Failure, with Exit Codes {1} & {2}.".format(time.asctime(),
+                                                                                                    urand_ret, clear_ret))
+                testutils.test_logger.fatal("{0} : Test Execution failure.".format(time.asctime()))
+                err_code = testutils.TEST_RESULT_FATAL
+                err_str = "{0} : Test Execution Failure..".format(time.asctime())
+                raise testutils.TestFailureException(err_code, err_str)
+        except subprocess.CalledProcessError:
+            testutils.test_logger.fatal("{0} : Test Cmd Execution Failure, Cannot proceed..".format(time.asctime()))
+            err_code = testutils.TEST_RESULT_FATAL
+            err_str = "{0} : Test Cmd Execution Failure, Cannot proceed..".format(time.asctime())
+            raise testutils.TestFailureException(err_code, err_str)
+    else:
+        testutils.test_logger.fatal("{0} : fb0 not available.".format(time.asctime()))
+        err_code = testutils.TEST_RESULT_FATAL
+        err_str = "{0} : Test Failure - 'fb0' not available in path. ".format(time.asctime())
+        raise testutils.TestFailureException(err_code, err_str)
+
+
+# # #
+#
+#   05. Check External Connectivity..
+#   Checks if the 'fb0' in supported on devices /dev/fb0 directory..
+#   Prints the -> Display Resolution,
+#              -> Display Supported Interfaces, and their status.
+#
+# # #
+
+def rotate_screen():
+    testutils.test_logger.info("{0} : Checking if Framebuffer device (fb0) is available.".format(time.asctime()))
+    if fb0_enabled:
+        testutils.test_logger.info("{0} : Framebuffer (fb0) device is available.".format(time.asctime()))
+        for var in range(0, 3):
+            cmd = "echo " + str(var) + " > /sys/class/graphics/fbcon/rotate"
+            testutils.test_logger.info("{0} : Proceeding test execution for Rotate - {1}..".format(time.asctime(), cmd))
             try:
-                testutils.test_logger.info("{0} : Switching to {1} - Brightness level".format(brightness, time.asctime()))
-                subprocess.call("echo {0} | sudo tee {1}" .format(brightness, path),
-                            shell=True)
-                time.sleep(3)
-                testutils.test_logger.info("{0} : Switched to {1} - Brightness level".format(brightness, time.asctime()))
+                ret = subprocess.call(cmd, shell=True)
+                time.sleep(10)
+                if ret == 0:
+                    testutils.test_logger.info("{0} : Test completed successfully for Rotate - {1}."
+                                               "".format(time.asctime(), var))
+                else:
+                    testutils.test_logger.fatal("{0} : Test Execution failure.".format(time.asctime()))
+                    err_code = testutils.TEST_RESULT_FATAL
+                    err_str = "{0} : Test Execution Failure..".format(time.asctime())
+                    raise testutils.TestFailureException(err_code, err_str)
             except subprocess.CalledProcessError:
-                testutils.test_logger.error("{0} : Execution Error, Try again.,, ".format(time.asctime()))
-                err_code = testutils.TEST_RESULT_ERROR
-                err_str = "{0} : Execution Error, Try again.,,".format(time.asctime())
+                testutils.test_logger.fatal("{0} : Test Cmd Execution Failure, fbcon unavailable cannot proceed.".format(time.asctime()))
+                err_code = testutils.TEST_RESULT_FATAL
+                err_str = "{0} : Test Cmd Execution Failure, fbcon unavailable cannot proceed.".format(time.asctime())
                 raise testutils.TestFailureException(err_code, err_str)
     else:
-        testutils.test_logger.fatal("{0} : File not found - Cannot find backlight files.".format(time.asctime()))
+        testutils.test_logger.fatal("{0} : fb0 not available.".format(time.asctime()))
         err_code = testutils.TEST_RESULT_FATAL
-        err_str = "{0} :  File not found - Cannot find backlight files.".format(time.asctime())
+        err_str = "{0} : Test Failure - 'fb0' not available in path. ".format(time.asctime())
         raise testutils.TestFailureException(err_code, err_str)
 
 
 # # #
 #
-#   06. Check's External Connectivity..
+#   06. Check External Connectivity..
 #   Checks if the 'fb0' in supported on devices /dev/fb0 directory..
-#   If fb0 is supported then performs below operations :
-#   ->  process of overlaying a foreground image with transparency over a
-#       background image. The transparency is often the fourth channel of an image
-#       ( e.g. in a transparent PNG), but it can also be a separate image. This
-#       transparency mask is often called the alpha mask or the alpha matte.
+#   Prints the -> Display Resolution,
+#              -> Display Supported Interfaces, and their status.
 #
 # # #
 
-def alpha_blending():
+def fb_string():
+    testutils.test_logger.info("{0} : Checking if Framebuffer device (fb0) is available.".format(time.asctime()))
+    if fb0_enabled:
+        testutils.test_logger.info("{0} : Framebuffer (fb0) device is available.".format(time.asctime()))
+        strings = ["NB2 Linux BSP!", "NB2 Linux BSP - ExaleapSemi", "NB2 Linux BSP - ExaleapSemi DisplaySS"]
+        for string in strings:
+            cmd = "fbstring 120 100 " + '"' + str(string) + '"' + " 0xff 0"
+            cmd1 = "fbstring 120 100 " + '"' + str(string) + '"' + " 0xffff 0"
+            try:
+                testutils.test_logger.info("{0} : Proceeding test execution for String - {1}.".format(time.asctime(),
+                                                                                                      cmd))
+                ret = subprocess.call(cmd, shell=True)
+                time.sleep(5)
+                testutils.test_logger.info("{0} : Proceeding test execution for String - {1}.".format(time.asctime(),
+                                                                                                      cmd1))
+                ret1 = subprocess.call(cmd1, shell=True)
+                time.sleep(5)
+                if ret == 0 and ret1 == 0:
+                    testutils.test_logger.info("{0} : Test completed successfully for FbString - {1}."
+                                               "".format(time.asctime(), string))
+                else:
+                    testutils.test_logger.fatal("{0} : Test Execution failure.".format(time.asctime()))
+                    err_code = testutils.TEST_RESULT_FATAL
+                    err_str = "{0} : Test Execution Failure..".format(time.asctime())
+                    raise testutils.TestFailureException(err_code, err_str)
+            except subprocess.CalledProcessError:
+                testutils.test_logger.fatal("{0} : Test Cmd Execution Failure, Cannot proceed..".format(time.asctime()))
+                err_code = testutils.TEST_RESULT_FATAL
+                err_str = "{0} : Test Cmd Execution Failure, Cannot proceed..".format(time.asctime())
+                raise testutils.TestFailureException(err_code, err_str)
+    else:
+        testutils.test_logger.fatal("{0} : fb0 not available.".format(time.asctime()))
+        err_code = testutils.TEST_RESULT_FATAL
+        err_str = "{0} : Test Failure - 'fb0' not available in path. ".format(time.asctime())
+        raise testutils.TestFailureException(err_code, err_str)
 
-    testutils.test_logger.info("{0} : Checking if Alpha Blending Images path exists.." .format(time.asctime()))
 
-    people_path = os.getcwd() + "/Contents/Alpha/people.png"
-    ocean_path = os.getcwd() + "/Contents/Alpha/ocean.jpg"
-    mat_path = os.getcwd() + "/Contents/Alpha/mat.png"
+# # #
+#
+#   07. Check External Connectivity..
+#   Checks if the 'fb0' in supported on devices /dev/fb0 directory..
+#   Prints the -> Display Resolution,
+#              -> Display Supported Interfaces, and their status.
+#
+# # #
 
-    if os.path.exists(people_path) and os.path.exists(ocean_path) and os.path.exists(mat_path):
-
-        testutils.test_logger.info("{0} : Images found in system path.. " .format(time.asctime()))
-
-        foreground = cv2.imread(people_path)
-        background = cv2.imread(ocean_path)
-        alpha = cv2.imread(mat_path)
-
-        foreground = foreground.astype(float)
-        background = background.astype(float)
-
-        alpha = alpha.astype(float) / 255
-
-        foreground = cv2.multiply(alpha, foreground)
-        background = cv2.multiply(1.0 - alpha, background)
-
-        outImage = cv2.add(foreground, background)
-
-        #img = cv2.imshow("OutImg", outImage/255)
-
-        testutils.test_logger.info("{0} : Writing the output to a Image..." .format(time.asctime()))
-
-        img = "Alpha_blending.png"
-
-        cv2.imwrite(img, outImage)
-
-        testutils.test_logger.info("{0} : Checking the written file.. " .format(time.asctime()))
-
-        if os.path.exists(os.getcwd() + "/" + img):
-            testutils.test_logger.info("{0} : Alpha Blending Image Generated Successfully.".format(time.asctime()))
-            testutils.test_logger.info("{0} : Image Available location - {1}".format(time.asctime(), os.getcwd() + "/" + img))
-        else:
-            testutils.test_logger.error("{0} : Alpha Blending Image Generation Failure." .format(time.asctime()))
+def fbtest():
+    testutils.test_logger.info("{0} : Checking if Framebuffer device (fb0) is available.".format(time.asctime()))
+    if fb0_enabled:
+        testutils.test_logger.info("{0} : Framebuffer (fb0) device is available.".format(time.asctime()))
+        cmd = "fbtest 260x260+740-+480"
+        testutils.test_logger.info("{0} : Proceeding test execution for FbTest - {1}.".format(time.asctime(),
+                                                                                                   cmd))
+        try:
+            ret = subprocess.call(cmd, shell=True)
+            if ret == 0:
+                testutils.test_logger.info("{0} : Test completed successfully for FbTest - {1}.".format(time.asctime(),
+                                                                                                        cmd))
+            else:
+                testutils.test_logger.fatal("{0} : Test Execution failure.".format(time.asctime()))
+                err_code = testutils.TEST_RESULT_FATAL
+                err_str = "{0} : Test Execution Failure..".format(time.asctime())
+                raise testutils.TestFailureException(err_code, err_str)
+        except subprocess.CalledProcessError:
+            testutils.test_logger.fatal("{0} : Test Cmd Execution Failure, Cannot proceed..".format(time.asctime()))
             err_code = testutils.TEST_RESULT_FATAL
-            err_str = "{0} : Test Failure - Alpha Blending Image Generation Failure.".format(time.asctime())
+            err_str = "{0} : Test Cmd Execution Failure, Cannot proceed..".format(time.asctime())
             raise testutils.TestFailureException(err_code, err_str)
-
-        cv2.waitKey(0)
-
     else:
-        testutils.test_logger.fatal("{0} : Alpha Blending supporting files. Not Found!.".format(time.asctime()))
+        testutils.test_logger.fatal("{0} : fb0 not available.".format(time.asctime()))
         err_code = testutils.TEST_RESULT_FATAL
-        err_str = "{0} : Images not found - Alpha Blending supporting files. Not Found!.".format(time.asctime())
+        err_str = "{0} : Test Failure - 'fb0' not available in path. ".format(time.asctime())
         raise testutils.TestFailureException(err_code, err_str)
 
 
 # # #
 #
-#   07. Check's External Connectivity..
+#   08-11. Check External Connectivity..
 #   Checks if the 'fb0' in supported on devices /dev/fb0 directory..
-#   If fb0 is supported then performs below operations :
-#   ->  Takes a input image and then performs the below functions:
-#          -> Image Resize, for 25%, 50%, 100%, 150%, 250%..
-#          -> Generate the Resize images and Save.
+#   Prints the -> Display Resolution,
+#              -> Display Supported Interfaces, and their status.
 #
 # # #
 
-def img_scaling():
-
-    img = "Retro"
-
-    img_path = os.getcwd() + "/Contents/Resize/" + img + ".png"
-
-    testutils.test_logger.info("{0} : Checking is Source Image is Available.. " .format(time.asctime()))
-
-    if os.path.exists(img_path):
-
-        testutils.test_logger.info("{0} : Source Image path found.." .format(time.asctime()))
-        src = cv2.imread(img_path, cv2.IMREAD_UNCHANGED)
-
-        scale_per = [50, 75, 150]
-
-        for scale in scale_per:
-
-            testutils.test_logger.info("{0} : Scaling Image to : {1}%" .format(time.asctime(), scale))
-            width = int(src.shape[1] * scale / 100)
-            height = int(src.shape[0] * scale / 100)
-
-            dsize = (width, height)
-
-            output = cv2.resize(src, dsize)
-            testutils.test_logger.info("{0} : Writing the Scaled image to the output Image." .format(time.asctime()))
-            cv2.imwrite(img + "_" + str(scale) + ".png", output)
-            testutils.test_logger.info("{0} : Successfully written the Output image in location : "
-                                       .format(time.asctime()) + img + "_" + str(scale) + ".png")
-
-    #    cv2.waitKey(0)
+def fbtest_param(args):
+    testutils.test_logger.info("{0} : Checking if Framebuffer device (fb0) is available.".format(time.asctime()))
+    if fb0_enabled:
+        testutils.test_logger.info("{0} : Framebuffer (fb0) device is available.".format(time.asctime()))
+        cmd = "fbtest " + str(args)
+        testutils.test_logger.info("{0} : Proceeding test execution for FbTest - {1}.".format(time.asctime(), cmd))
+        try:
+            ret = subprocess.call(cmd, shell=True)
+            if ret == 0:
+                testutils.test_logger.info("{0} : Test completed successfully for FbTest - {1}.".format(time.asctime(),
+                                                                                                        cmd))
+            else:
+                testutils.test_logger.fatal("{0} : Test Execution failure.".format(time.asctime()))
+                err_code = testutils.TEST_RESULT_FATAL
+                err_str = "{0} : Test Execution Failure..".format(time.asctime())
+                raise testutils.TestFailureException(err_code, err_str)
+        except subprocess.CalledProcessError:
+            testutils.test_logger.fatal("{0} : Test Cmd Execution Failure, Cannot proceed..".format(time.asctime()))
+            err_code = testutils.TEST_RESULT_FATAL
+            err_str = "{0} : Test Cmd Execution Failure, Cannot proceed..".format(time.asctime())
+            raise testutils.TestFailureException(err_code, err_str)
     else:
-        testutils.test_logger.fatal("{0} : Error :: Resizing - Source Image not found!".format(time.asctime()))
+        testutils.test_logger.fatal("{0} : fb0 not available.".format(time.asctime()))
         err_code = testutils.TEST_RESULT_FATAL
-        err_str = "{0} : Image not found - Source Image Not Found!.".format(time.asctime())
+        err_str = "{0} : Test Failure - 'fb0' not available in path. ".format(time.asctime())
         raise testutils.TestFailureException(err_code, err_str)
 
 
 # # #
 #
-#   08. Check's External Connectivity..
+#       **** CHECK SUM FUNCTION ***
+#   *.Check Display Connectivity in use.*
 #   Checks if the 'fb0' in supported on devices /dev/fb0 directory..
-#   If fb0 is supported then performs below operations :
-#   ->  Checks the Connected Display and performs the following.:
-#          -> Gets the EDID Data of the Connected Display.
-#               (Ext, Display Identification Data..)
+#   Prints the -> Display Resolution,
+#              -> Display Supported Interfaces, and their status.
 #
 # # #
 
-def get_edid():
-    testutils.test_logger.info("{0} : Get the EDID Data of a Connected Display." .format(time.asctime()))
+def check_display():
+    testutils.test_logger.info("{0} : Checking if the connected Display is LVDS or MIPI.".format(time.asctime()))
     try:
-        #edid_data = subprocess.check_output("python3 -m hexdump /sys/class/drm/card0-eDP-1/edid", shell=True)
-        edid_data = subprocess.check_output("python3 -m hexdump /sys/class/drm/card0-HDMI-A-1/edid", shell=True)
-        testutils.test_logger.info("{0} : Getting the EDID Data.." .format(time.asctime()))
-        testutils.test_logger.info('\n' * 2 + edid_data.decode())
-        edid_file = open("EDID.txt", 'w+')
-        edid_file.write(edid_data.decode())
-        edid_file.close()
-        testutils.test_logger.info("{0} : Checking if the EDID file is created.." .format(time.asctime()))
-        if os.path.exists(os.getcwd() + "/EDID.txt"):
-            testutils.test_logger.info("{0} : EDID file is created, and saved Successfully..".format(time.asctime()))
+        display = subprocess.check_output('for p in /sys/class/drm/*/status; do con=${p%/status}; echo -n'
+                                          ' "${con#*/card?-}: "; cat $p; done', shell=True)
+        if b"LVDS" in display:
+            testutils.test_logger.info("{0} : LVDS Display, connected.".format(time.asctime()))
+            return True
+        elif b"DSI" in display:
+            testutils.test_logger.info("{0} : MIPI Display, connected.".format(time.asctime()))
+            return False
         else:
-            testutils.test_logger.error("{0} : Error :: EDID Test Failure!" .format(time.asctime()))
-            err_code = testutils.TEST_RESULT_ERROR
-            err_str = "{0} : EDID Test Failure, Could not located Text File in path!." .format(time.asctime())
+            testutils.test_logger.fatal("{0} : Error checking the Display connection..".format(time.asctime()))
+            err_code = testutils.TEST_RESULT_FATAL
+            err_str = "{0} : Error checking the Display connection..".format(time.asctime())
             raise testutils.TestFailureException(err_code, err_str)
     except subprocess.CalledProcessError:
-        testutils.test_logger.fatal("{0} : Error :: EDID Test Failure!".format(time.asctime()))
+        testutils.test_logger.fatal("{0} : Test Cmd Execution Failure, Cannot proceed..".format(time.asctime()))
         err_code = testutils.TEST_RESULT_FATAL
-        err_str = "{0} : EDID Test Failure, Cannot Execute Program!.".format(time.asctime())
+        err_str = "{0} : Test Cmd Execution Failure, Cannot proceed..".format(time.asctime())
         raise testutils.TestFailureException(err_code, err_str)
 
 
 # # #
 #
-#   09. Check's External Connectivity..
+#   11. Check External Connectivity..
 #   Checks if the 'fb0' in supported on devices /dev/fb0 directory..
-#   If fb0 is supported then performs below operations :
-#   ->  Checks the Connected Display and performs the following.:
-#          -> Takes Image as a Source and performs below functions.
-#               ->  Pixel of Height and Width
-#               ->  Outputs the Channels available..
+#   Prints the -> Display Resolution,
+#              -> Display Supported Interfaces, and their status.
 #
 # # #
 
-def change_resolution():
-    testutils.test_logger.skip("Skipping the Test...")
-    testutils.test_logger.skip("{0} : Skipping the Test...".format(time.asctime()))
-    err_code = testutils.TEST_RESULT_SKIP
-    err_str = "{0} : Skipping the Test, Cannot Execute Program!.".format(time.asctime())
-    raise testutils.TestFailureException(err_code, err_str)
-
-
-# # #
-#
-#   10. Check's External Connectivity..
-#   Checks if the 'fb0' in supported on devices /dev/fb0 directory..
-#   If fb0 is supported then performs below operations :
-#   ->  Checks the Connected Display and performs the following.:
-#          -> Takes Image as a Source and performs below functions.
-#               ->  Pixel of Height and Width
-#               ->  Outputs the Channels available..
-#
-# # #
-
-def depth_change():
-    testutils.test_logger.skip("Skipping the Test...")
-    testutils.test_logger.skip("{0} : Skipping the Test...".format(time.asctime()))
-    err_code = testutils.TEST_RESULT_SKIP
-    err_str = "{0} : Skipping the Test, Cannot Execute Program!.".format(time.asctime())
-    raise testutils.TestFailureException(err_code, err_str)
-
-
-# # #
-#
-#   11. Check's External Connectivity..
-#   Checks if the 'fb0' in supported on devices /dev/fb0 directory..
-#   If fb0 is supported then performs below operations :
-#   ->  Checks the Connected Display and performs the following.:
-#          -> Takes Image as a Source and performs below functions.
-#               ->  Pixel of Height and Width
-#               ->  Outputs the Channels available..
-#
-# # #
-
-def get_img_info():
-    pic = "Lion.jpg"
-    img_path = os.getcwd() + "/Contents/" + pic
-
-    testutils.test_logger.info("{0} : Checking for source Image.." .format(time.asctime()))
-
-    if os.path.exists(img_path):
-        testutils.test_logger.info("{0} : Source Image Path available." .format(time.asctime()))
-        img = cv2.imread(img_path, cv2.IMREAD_UNCHANGED)
-        size = img.size
-        height, width, channels = img.shape[0], img.shape[1], img.shape[2]
-        testutils.test_logger.info("{0} : {1} Image Information.. ".format(time.asctime(), pic))
-        testutils.test_logger.info("{0} : Width : {1}" .format(time.asctime(), width))
-        testutils.test_logger.info("{0} : Height : {1}".format(time.asctime(), height))
-        testutils.test_logger.info("{0} : Pixels : {1}" .format(time.asctime(), height*width))
-        testutils.test_logger.info("{0} : Size : {1}".format(time.asctime(), size))
-        testutils.test_logger.info("{0} : Channels : {1}" .format(time.asctime(), channels))
-    else:
-        testutils.test_logger.fatal("{0} : Error :: Resizing - Source Image not found!".format(time.asctime()))
-        err_code = testutils.TEST_RESULT_FATAL
-        err_str = "{0} : Image not found - Source Image Not Found in Path!.".format(time.asctime())
-        raise testutils.TestFailureException(err_code, err_str)
-
-
-# # #
-#
-#   12. Check's External Connectivity..
-#   Checks if the 'fb0' in supported on devices /dev/fb0 directory..
-#   If fb0 is supported then performs below operations :
-#   ->  Checks the Connected Display and performs the following.:
-#          -> Takes Image as a Source and performs below functions.
-#               ->  Changes the Color Depth of the image..
-#                       By varying the cluster from 4, 8, 16, 32
-#                       (higher the Value, better image color quality..)
-# # #
-
-def change_color_depth():
-
-    def kmeans_color_quantization(image, clusters=4, rounds=1):
-        testutils.test_logger.info("{0} : Getting the Image Sizes. " .format(time.asctime()))
-        h, w = image.shape[0], image.shape[1]
-        samples = np.zeros([h * w, 3], dtype=np.float32)
-        count = 0
-        for x in range(h):
-            for y in range(w):
-                samples[count] = image[x][y]
-                count += 1
-        compactness, labels, centers = cv2.kmeans(samples, clusters, None,
-                                                  (cv2.TERM_CRITERIA_EPS + cv2.TERM_CRITERIA_MAX_ITER, 10000, 0.0001),
-                                                  rounds, cv2.KMEANS_RANDOM_CENTERS)
-        centers = np.uint8(centers)
-        res = centers[labels.flatten()]
-        testutils.test_logger.info("{0} : Getting the Processed Image.. " .format(time.asctime()))
-        return res.reshape(image.shape)
-
-    img_path = os.getcwd() + "/Contents/" + "Bit.jpg"
-
-    if os.path.exists(img_path):
-        testutils.test_logger.info("{0} : Source Image path found." .format(time.asctime()))
-        image = cv2.imread(img_path)
-        testutils.test_logger.info("{0} : Processing Color Depth by Default set to : 4 Bit" .format(time.asctime()))
-        result = kmeans_color_quantization(image, clusters=4)
-        testutils.test_logger.info("{0} : Saving the Generated Image.." .format(time.asctime()))
-        cv2.imwrite('Bit-4.jpg', result)
-        testutils.test_logger.info("{0} : Image Saved Successfully.".format(time.asctime()))
-        #cv2.waitKey()
-        testutils.test_logger.info("{0} : Validating the processed Image.." .format(time.asctime()))
-        if os.path.exists(os.getcwd()+"/Bit-4.jpg"):
-            testutils.test_logger.info("{0} : Output processed Image, found." .format(time.asctime()))
-        else:
-            testutils.test_logger.fatal("{0} : Error :: Resizing - Source Image not found!".format(time.asctime()))
-            err_code = testutils.TEST_RESULT_FATAL
-            err_str = "{0} : Output Image not Found.!.".format(time.asctime())
-            raise testutils.TestFailureException(err_code, err_str)
-    else:
-        testutils.test_logger.error("{0} : Error :: Resizing - Source Image not found!".format(time.asctime()))
-        err_code = testutils.TEST_RESULT_ERROR
-        err_str = "{0} : Image not found - Source Image Not Found in Path!.".format(time.asctime())
-        raise testutils.TestFailureException(err_code, err_str)
-
-
-# # #
-#
-#   13. Check's External Connectivity..
-#   Checks if the 'fb0' in supported on devices /dev/fb0 directory..
-#   If fb0 is supported then performs below operations :
-#   ->  Checks the Connected Display and performs the following.:
-#          -> Creates a Animated 2D Image and Renders it on the display.
-#
-# # #
-
-def render_image():
-
-    images = []
-
-    testutils.test_logger.info("{0} : Setting up Parameters." .format(time.asctime()))
-
-    width = 600
-    center = width // 2
-    color_1 = (0, 153, 153)
-    color_2 = (0, 255, 255)
-    max_radius = int(center * 1.5)
-    step = 8
-
-    testutils.test_logger.info("{0} : Trying to Import necessary libraries.. ".format(time.asctime()))
-    try:
-        from PIL import Image, ImageDraw
-        import webbrowser
-
-        testutils.test_logger.info("{0} : Libraries available..".format(time.asctime()))
-
-        for i in range(0, max_radius, step):
-            im = Image.new('RGB', (width, width), color_1)
-            draw = ImageDraw.Draw(im)
-            draw.ellipse((center - i, center - i, center + i, center + i), fill=color_2)
-            images.append(im)
-
-        for i in range(0, max_radius, step):
-            im = Image.new('RGB', (width, width), color_2)
-            draw = ImageDraw.Draw(im)
-            draw.ellipse((center - i, center - i, center + i, center + i), fill=color_1)
-            images.append(im)
-
-        testutils.test_logger.info("{0} : Trying to save image. ".format(time.asctime()))
-
-        images[0].save("Image.gif",
-                       save_all=True, append_images=images[1:], optimize=False, duration=40, loop=0)
-
-        if os.path.exists(os.getcwd() + "/Image.gif"):
-            testutils.test_logger.info("{0} : Image saved Successfully.." .format(time.asctime()))
-            #webbrowser.open("Image.gif")
-        else:
-            testutils.test_logger.error("{0} : Image generation failed. " .format(time.asctime()))
-            err_code = testutils.TEST_RESULT_FATAL
-            err_str = "{0} : Image generation failed.".format(time.asctime())
-            raise testutils.TestFailureException(err_code, err_str)
-
-    except ImportError:
-        testutils.test_logger.fatal("{0} : Cannot Import Required Test Packages." .format(time.asctime()))
-        err_code = testutils.TEST_RESULT_ERROR
-        err_str = "{0} : Cannot Import Required Test Packages.".format(time.asctime())
-        raise testutils.TestFailureException(err_code, err_str)
-
-
-# # #
-#
-#   14. Check's External Connectivity..
-#   Checks if the 'fb0' in supported on devices /dev/fb0 directory..
-#   If fb0 is supported then performs below operations :
-#   ->  Checks the Connected Display and performs the following.:
-#          -> Creates a Overlap image from 2 images.
-#
-# # #
-
-def overlay_support():
-
-    img1_path = os.getcwd() + "/Contents/Overlay/1.jpg"
-    img2_path = os.getcwd() + "/Contents/Overlay/2.jpg"
-
-    testutils.test_logger.info("{0} : Checking if the Source Images are available. " .format(time.asctime()))
-
-    if os.path.exists(img1_path) and os.path.exists(img2_path):
-
+def fb_sierpinski(wd, ht, posx, posy):
+    testutils.test_logger.info("{0} : Checking if Framebuffer device (fb0) is available.".format(time.asctime()))
+    if fb0_enabled:
+        testutils.test_logger.info("{0} : Framebuffer (fb0) device is available.".format(time.asctime()))
+        cmd = "WIDTH=" + str(wd) + " HEIGHT=" + str(ht) + " POSX=" + str(posx) + " POSY=" + str(posy) + " fb_sierpinski"
+        testutils.test_logger.info("{0} : Proceeding test execution for Cmd - {1}.".format(time.asctime(), cmd))
         try:
-            from PIL import Image
-            testutils.test_logger.info("{0} : Source Path Available in path." .format(time.asctime()))
-            bg_img = Image.open(img1_path)
-            ov_img = Image.open(img2_path)
-
-            bg_img = bg_img.convert("RGBA")
-            ov_img = ov_img.convert("RGBA")
-
-            testutils.test_logger.info("{0} : Blending the source images.. " .format(time.asctime()))
-
-            overlay_img = Image.blend(bg_img, ov_img, 0.5)
-
-            overlay_img.save("Overlay.png", 'PNG')
-
-            if os.path.exists(os.getcwd() + "/Overlay.png"):
-                testutils.test_logger.info("{0} : Overlay Image Successfully created." .format(time.asctime()))
-                testutils.test_logger.info("{0} : Overlay Image location : {1}" .format(time.asctime(),
-                                                                                        os.getcwd()+"/Overlay.png"))
+            ret = subprocess.call(cmd, shell=True)
+            if ret == 0:
+                testutils.test_logger.info("{0} : Test completed successfully for fb_sierpinski - {1}.".format(time.asctime(),
+                                                                                                        cmd))
             else:
-                testutils.test_logger.fatal("{0} : Cannot Import Required Test Packages.".format(time.asctime()))
+                testutils.test_logger.fatal("{0} : Test Execution failure.".format(time.asctime()))
                 err_code = testutils.TEST_RESULT_FATAL
-                err_str = "{0} : Cannot Import Required Test Packages.".format(time.asctime())
+                err_str = "{0} : Test Execution Failure..".format(time.asctime())
+                raise testutils.TestFailureException(err_code, err_str)
+        except subprocess.CalledProcessError:
+            testutils.test_logger.fatal("{0} : Test Cmd Execution Failure, Cannot proceed..".format(time.asctime()))
+            err_code = testutils.TEST_RESULT_FATAL
+            err_str = "{0} : Test Cmd Execution Failure, Cannot proceed..".format(time.asctime())
+            raise testutils.TestFailureException(err_code, err_str)
+    else:
+        testutils.test_logger.fatal("{0} : fb0 not available.".format(time.asctime()))
+        err_code = testutils.TEST_RESULT_FATAL
+        err_str = "{0} : Test Failure - 'fb0' not available in path. ".format(time.asctime())
+        raise testutils.TestFailureException(err_code, err_str)
+
+
+# # #
+#
+#   12. Check External Connectivity..
+#   Checks if the 'fb0' in supported on devices /dev/fb0 directory..
+#   Prints the -> Display Resolution,
+#              -> Display Supported Interfaces, and their status.
+#
+# # #
+
+def fb_mandelbrot(wd, ht, posx, posy):
+    testutils.test_logger.info("{0} : Checking if Framebuffer device (fb0) is available.".format(time.asctime()))
+    if fb0_enabled:
+        testutils.test_logger.info("{0} : Framebuffer (fb0) device is available.".format(time.asctime()))
+        cmd = "WIDTH=" + str(wd) + " HEIGHT=" + str(ht) + " POSX=" + str(posx) + " POSY=" + str(posy) + " fb_mandelbrot"
+        testutils.test_logger.info("{0} : Proceeding test execution for Cmd - {1}.".format(time.asctime(), cmd))
+        try:
+            ret = subprocess.call(cmd, shell=True)
+            if ret == 0:
+                testutils.test_logger.info("{0} : Test completed successfully for fb_mandelbrot - {1}.".format(time.asctime(),
+                                                                                                        cmd))
+            else:
+                testutils.test_logger.fatal("{0} : Test Execution failure.".format(time.asctime()))
+                err_code = testutils.TEST_RESULT_FATAL
+                err_str = "{0} : Test Execution Failure..".format(time.asctime())
+                raise testutils.TestFailureException(err_code, err_str)
+        except subprocess.CalledProcessError:
+            testutils.test_logger.fatal("{0} : Test Cmd Execution Failure, Cannot proceed..".format(time.asctime()))
+            err_code = testutils.TEST_RESULT_FATAL
+            err_str = "{0} : Test Cmd Execution Failure, Cannot proceed..".format(time.asctime())
+            raise testutils.TestFailureException(err_code, err_str)
+    else:
+        testutils.test_logger.fatal("{0} : fb0 not available.".format(time.asctime()))
+        err_code = testutils.TEST_RESULT_FATAL
+        err_str = "{0} : Test Failure - 'fb0' not available in path. ".format(time.asctime())
+        raise testutils.TestFailureException(err_code, err_str)
+
+
+# # #
+#
+#   13. Check External Connectivity..
+#   Checks if the 'fb0' in supported on devices /dev/fb0 directory..
+#   Prints the -> Display Resolution,
+#              -> Display Supported Interfaces, and their status.
+#
+# # #
+
+def fb_rectangle(wd, ht, posx, posy):
+    testutils.test_logger.info("{0} : Checking if Framebuffer device (fb0) is available.".format(time.asctime()))
+    if fb0_enabled:
+        testutils.test_logger.info("{0} : Framebuffer (fb0) device is available.".format(time.asctime()))
+        cmd = "WIDTH=" + str(wd) + " HEIGHT=" + str(ht) + " POSX=" + str(posx) + " POSY=" + str(posy) + " fb_rectangle"
+        testutils.test_logger.info("{0} : Proceeding test execution for Cmd - {1}.".format(time.asctime(), cmd))
+        try:
+            ret = subprocess.call(cmd, shell=True)
+            if ret == 0:
+                testutils.test_logger.info("{0} : Test completed successfully for fb_rectangle - {1}.".format(time.asctime(),
+                                                                                                        cmd))
+            else:
+                testutils.test_logger.fatal("{0} : Test Execution failure.".format(time.asctime()))
+                err_code = testutils.TEST_RESULT_FATAL
+                err_str = "{0} : Test Execution Failure..".format(time.asctime())
+                raise testutils.TestFailureException(err_code, err_str)
+        except subprocess.CalledProcessError:
+            testutils.test_logger.fatal("{0} : Test Cmd Execution Failure, Cannot proceed..".format(time.asctime()))
+            err_code = testutils.TEST_RESULT_FATAL
+            err_str = "{0} : Test Cmd Execution Failure, Cannot proceed..".format(time.asctime())
+            raise testutils.TestFailureException(err_code, err_str)
+    else:
+        testutils.test_logger.fatal("{0} : fb0 not available.".format(time.asctime()))
+        err_code = testutils.TEST_RESULT_FATAL
+        err_str = "{0} : Test Failure - 'fb0' not available in path. ".format(time.asctime())
+        raise testutils.TestFailureException(err_code, err_str)
+
+
+# # #
+#
+#   14. Check External Connectivity..
+#   Checks if the 'fb0' in supported on devices /dev/fb0 directory..
+#   Prints the -> Display Resolution,
+#              -> Display Supported Interfaces, and their status.
+#
+# # #
+
+def render_images(disp, path):
+    testutils.test_logger.info("{0} : Checking the path to render Images on {1}.".format(time.asctime(), disp))
+    if os.path.exists(path):
+        testutils.test_logger.info("{0} : {1} binary path available, proceeding to test.".format(time.asctime(), disp))
+        bins = os.listdir(path)
+        testutils.test_logger.info("{0} : Found binaries in path - {1}".format(time.asctime(), bins))
+        random.shuffle(bins)
+        for bin in bins[:4]:
+            cmd = "cat " + path + bin + " > /dev/fb0"
+            try:
+                testutils.test_logger.info("{0} : Trying to Execute the Cmd - {1}".format(time.asctime(), cmd))
+                ret = subprocess.call(cmd, shell=True)
+                time.sleep(10)
+                if ret == 0:
+                    testutils.test_logger.info("{0} : Test completed successfully for Rendering Image - {1}.".format(time.asctime(),
+                                                                                         bin))
+                else:
+                    testutils.test_logger.fatal("{0} : Test Execution failure.".format(time.asctime()))
+                    err_code = testutils.TEST_RESULT_FATAL
+                    err_str = "{0} : Test Execution Failure..".format(time.asctime())
+                    raise testutils.TestFailureException(err_code, err_str)
+            except subprocess.CalledProcessError:
+                testutils.test_logger.fatal("{0} : Test Cmd Execution Failure, Cannot proceed..".format(time.asctime()))
+                err_code = testutils.TEST_RESULT_FATAL
+                err_str = "{0} : Test Cmd Execution Failure, Cannot proceed..".format(time.asctime())
                 raise testutils.TestFailureException(err_code, err_str)
 
-        except ImportError:
-            testutils.test_logger.fatal("{0} : Cannot Import Required Test Packages.".format(time.asctime()))
+
+def modeset():
+    testutils.test_logger.info("{0} : Checking if Framebuffer device (fb0) is available.".format(time.asctime()))
+    if fb0_enabled:
+        testutils.test_logger.info("{0} : Framebuffer (fb0) device is available.".format(time.asctime()))
+        cmd = "modeset"
+        testutils.test_logger.info("{0} : Proceeding test execution for Modeset - {1}.".format(time.asctime(),
+                                                                                                   cmd))
+        try:
+            ret = subprocess.call(cmd, shell=True)
+            if ret == 0:
+                testutils.test_logger.info("{0} : Test completed successfully for modeset - {1}.".format(time.asctime(),
+                                                                                                        cmd))
+            else:
+                testutils.test_logger.fatal("{0} : Test Execution failure.".format(time.asctime()))
+                err_code = testutils.TEST_RESULT_FATAL
+                err_str = "{0} : Test Execution Failure..".format(time.asctime())
+                raise testutils.TestFailureException(err_code, err_str)
+        except subprocess.CalledProcessError:
+            testutils.test_logger.fatal("{0} : Test Cmd Execution Failure, Cannot proceed..".format(time.asctime()))
             err_code = testutils.TEST_RESULT_FATAL
-            err_str = "{0} : Cannot Import Required Test Packages.".format(time.asctime())
+            err_str = "{0} : Test Cmd Execution Failure, Cannot proceed..".format(time.asctime())
             raise testutils.TestFailureException(err_code, err_str)
     else:
-        testutils.test_logger.error("{0} : Source Overlay images not available.".format(time.asctime()))
-        err_code = testutils.TEST_RESULT_ERROR
-        err_str = "{0} : Source overlay images are not available.".format(time.asctime())
+        testutils.test_logger.fatal("{0} : modeset not available.".format(time.asctime()))
+        err_code = testutils.TEST_RESULT_FATAL
+        err_str = "{0} : Test Failure - 'fb0' not available in path. ".format(time.asctime())
         raise testutils.TestFailureException(err_code, err_str)
 
+
+def modeset_double_buff():
+    testutils.test_logger.info("{0} : Checking if Framebuffer device (fb0) is available.".format(time.asctime()))
+    if fb0_enabled:
+        testutils.test_logger.info("{0} : Framebuffer (fb0) device is available.".format(time.asctime()))
+        cmd = "modeset-double-buffered"
+        testutils.test_logger.info("{0} : Proceeding test execution for Modeset - {1}.".format(time.asctime(),
+                                                                                                   cmd))
+        try:
+            ret = subprocess.call(cmd, shell=True)
+            if ret == 0:
+                testutils.test_logger.info("{0} : Test completed successfully for modeset - {1}.".format(time.asctime(),
+                                                                                                        cmd))
+            else:
+                testutils.test_logger.fatal("{0} : Test Execution failure.".format(time.asctime()))
+                err_code = testutils.TEST_RESULT_FATAL
+                err_str = "{0} : Test Execution Failure..".format(time.asctime())
+                raise testutils.TestFailureException(err_code, err_str)
+        except subprocess.CalledProcessError:
+            testutils.test_logger.fatal("{0} : Test Cmd Execution Failure, Cannot proceed..".format(time.asctime()))
+            err_code = testutils.TEST_RESULT_FATAL
+            err_str = "{0} : Test Cmd Execution Failure, Cannot proceed..".format(time.asctime())
+            raise testutils.TestFailureException(err_code, err_str)
+    else:
+        testutils.test_logger.fatal("{0} : modeset not available.".format(time.asctime()))
+        err_code = testutils.TEST_RESULT_FATAL
+        err_str = "{0} : Test Failure - 'fb0' not available in path. ".format(time.asctime())
+        raise testutils.TestFailureException(err_code, err_str)
+
+
+def modeset_vsync():
+    testutils.test_logger.info("{0} : Checking if Framebuffer device (fb0) is available.".format(time.asctime()))
+    if fb0_enabled:
+        testutils.test_logger.info("{0} : Framebuffer (fb0) device is available.".format(time.asctime()))
+        cmd = "modeset-vsync"
+        testutils.test_logger.info("{0} : Proceeding test execution for Modeset - {1}.".format(time.asctime(),
+                                                                                                   cmd))
+        try:
+            ret = subprocess.call(cmd, shell=True)
+            if ret == 0:
+                testutils.test_logger.info("{0} : Test completed successfully for modeset - {1}.".format(time.asctime(),
+                                                                                                        cmd))
+            else:
+                testutils.test_logger.fatal("{0} : Test Execution failure.".format(time.asctime()))
+                err_code = testutils.TEST_RESULT_FATAL
+                err_str = "{0} : Test Execution Failure..".format(time.asctime())
+                raise testutils.TestFailureException(err_code, err_str)
+        except subprocess.CalledProcessError:
+            testutils.test_logger.fatal("{0} : Test Cmd Execution Failure, Cannot proceed..".format(time.asctime()))
+            err_code = testutils.TEST_RESULT_FATAL
+            err_str = "{0} : Test Cmd Execution Failure, Cannot proceed..".format(time.asctime())
+            raise testutils.TestFailureException(err_code, err_str)
+    else:
+        testutils.test_logger.fatal("{0} : modeset not available.".format(time.asctime()))
+        err_code = testutils.TEST_RESULT_FATAL
+        err_str = "{0} : Test Failure - 'fb0' not available in path. ".format(time.asctime())
+        raise testutils.TestFailureException(err_code, err_str)
 
 
 # Main functional Block..
