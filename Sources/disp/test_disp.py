@@ -351,13 +351,9 @@ def test_disp_execute_case(test_case):
                 testutils.test_logger.info("{0} ═══════════ TEST_ID :: NB2_DISP_11 : Test Iteration : {1} ═══════════"
                         .format(time.asctime(), idx))
                 if check_display():
-                    wd, ht = 600, 400
-                    posx, posy = 0, 50
-                    fb_sierpinski(wd, ht, posx, posy)
+                    fb_sierpinski()
                 else:
-                    wd, ht = 480, 500
-                    posx, posy = 0, 50
-                    fb_sierpinski(wd, ht, posx, posy)
+                    fb_sierpinski()
             #           Once called, returns an Error Code with the Error String
             #           Pass or Fail Message..
 
@@ -368,13 +364,9 @@ def test_disp_execute_case(test_case):
                 testutils.test_logger.info("{0} ═══════════ TEST_ID :: NB2_DISP_12 : Test Iteration : {1} ═══════════"
                         .format(time.asctime(), idx))
                 if check_display():
-                    wd, ht = 700, 479
-                    posx, posy = 0, 0
-                    fb_mandelbrot(wd, ht, posx, posy)
+                    fb_mandelbrot()
                 else:
-                    wd, ht = 480, 800
-                    posx, posy = 0, 100
-                    fb_mandelbrot(wd, ht, posx, posy)
+                    fb_mandelbrot()
             #           Once called, returns an Error Code with the Error String
             #           Pass or Fail Message..
 
@@ -385,13 +377,9 @@ def test_disp_execute_case(test_case):
                 testutils.test_logger.info("{0} ═══════════ TEST_ID :: NB2_DISP_13 : Test Iteration : {1} ═══════════"
                         .format(time.asctime(), idx))
                 if check_display():
-                    wd, ht = 750, 475
-                    posx, posy = 0, 0
-                    fb_rectangle(wd, ht, posx, posy)
+                    fb_rectangle()
                 else:
-                    wd, ht = 480, 800
-                    posx, posy = 0, 0
-                    fb_rectangle(wd, ht, posx, posy)
+                    fb_rectangle()
             #           Once called, returns an Error Code with the Error String
             #           Pass or Fail Message..
 
@@ -402,35 +390,42 @@ def test_disp_execute_case(test_case):
                 testutils.test_logger.info("{0} ═══════════ TEST_ID :: NB2_DISP_14 : Test Iteration : {1} ═══════════"
                         .format(time.asctime(), idx))
                 bpp = 'cat /sys/devices/platform/display-subsystem/graphics/fb0/bits_per_pixel'
-                testutils.test_logger.info("{0} Checking Display BPP Value." .format(time.asctime()))
-                bpp_val = subprocess.check_output(bpp, shell=True).decode('utf-8')
-                testutils.test_logger.info("{0} Current Display BPP Value - {1}" .format(time.asctime(), bpp_val))
-                if check_display():
-                    if int(bpp_val) == 32:
-                        render_images("LVDS", '/opt/lvds/32bpp/')
-                    elif int(bpp_val) == 24:
-                        render_images("LVDS", '/opt/lvds/24bpp/')    
-                    elif int(bpp_val) == 16:
-                        render_images("LVDS", '/opt/lvds/16bpp/')
+                
+                try:
+                    testutils.test_logger.info("{0} Checking Display BPP Value." .format(time.asctime()))
+                    bpp_val = subprocess.check_output(bpp, shell=True).decode('utf-8')
+                    testutils.test_logger.info("{0} Current Display BPP Value - {1}" .format(time.asctime(), bpp_val))
+                    if check_display():
+                        if int(bpp_val) == 32:
+                            render_images("LVDS", '/opt/lvds/32bpp/')
+                        elif int(bpp_val) == 24:
+                            render_images("LVDS", '/opt/lvds/24bpp/')    
+                        elif int(bpp_val) == 16:
+                            render_images("LVDS", '/opt/lvds/16bpp/')
+                        else:
+                            testutils.test_logger.error("{0} : Cannot locate LVDS image directory.".format(time.asctime()))
+                            err_code = testutils.TEST_RESULT_ERROR
+                            err_str = "{0} : Test Execution Failure..".format(time.asctime())
+                            raise testutils.TestFailureException(err_code, err_str)
                     else:
-                        testutils.test_logger.error("{0} : Cannot locate LVDS image directory.".format(time.asctime()))
-                        err_code = testutils.TEST_RESULT_ERROR
-                        err_str = "{0} : Test Execution Failure..".format(time.asctime())
-                        raise testutils.TestFailureException(err_code, err_str)
-                else:
-                    if int(bpp_val) == 32:
-                        render_images("MIPI", '/opt/mipi/32bpp/')
-                    elif int(bpp_val) == 24:
-                        render_images("MIPI", '/opt/mipi/24bpp/')    
-                    elif int(bpp_val) == 16:
-                        render_images("MIPI", '/opt/mipi/16bpp/')
-                    else:
-                        testutils.test_logger.error("{0} : Cannot locate MIPI image directory.".format(time.asctime()))
-                        err_code = testutils.TEST_RESULT_ERROR
-                        err_str = "{0} : Test Execution Failure..".format(time.asctime())
-                        raise testutils.TestFailureException(err_code, err_str)
-            #           Once called, returns an Error Code with the Error String
-            #           Pass or Fail Message..
+                        if int(bpp_val) == 32:
+                            render_images("MIPI", '/opt/mipi/32bpp/')
+                        elif int(bpp_val) == 24:
+                            render_images("MIPI", '/opt/mipi/24bpp/')    
+                        elif int(bpp_val) == 16:
+                            render_images("MIPI", '/opt/mipi/16bpp/')
+                        else:
+                            testutils.test_logger.error("{0} : Cannot locate MIPI image directory.".format(time.asctime()))
+                            err_code = testutils.TEST_RESULT_ERROR
+                            err_str = "{0} : Test Execution Failure..".format(time.asctime())
+                            raise testutils.TestFailureException(err_code, err_str)
+            #               Once called, returns an Error Code with the Error String
+            #               Pass or Fail Message..
+                except subprocess.CalledProcessError:
+                    testutils.test_logger.fatal("{0} : Test Cmd Execution Failure, cannot proceed.".format(time.asctime()))
+                    err_code = testutils.TEST_RESULT_FATAL
+                    err_str = "{0} : Test Cmd Execution Failure, cannot proceed.".format(time.asctime())
+                    raise testutils.TestFailureException(err_code, err_str)
 
         elif test_case == 15:
             #           Calling the Test Function directly..
@@ -439,35 +434,43 @@ def test_disp_execute_case(test_case):
                 testutils.test_logger.info("{0} ═══════════ TEST_ID :: NB2_DISP_15 : Test Iteration : {1} ═══════════"
                         .format(time.asctime(), idx))
                 bpp = 'cat /sys/devices/platform/display-subsystem/graphics/fb0/bits_per_pixel'
-                testutils.test_logger.info("{0} Checking Display BPP Value." .format(time.asctime()))
-                bpp_val = subprocess.check_output(bpp, shell=True).decode('utf-8')
-                testutils.test_logger.info("{0} Current Display BPP Value - {1}" .format(time.asctime(), bpp_val))
-                if check_display():
-                    if int(bpp_val) == 32:
-                        render_images("LVDS", '/opt/lvds/32bpp/')
-                    elif int(bpp_val) == 24:
-                        render_images("LVDS", '/opt/lvds/24bpp/')    
-                    elif int(bpp_val) == 16:
-                        render_images("LVDS", '/opt/lvds/16bpp/')
+                
+                try:
+                    testutils.test_logger.info("{0} Checking Display BPP Value." .format(time.asctime()))
+                    bpp_val = subprocess.check_output(bpp, shell=True).decode('utf-8')
+                    testutils.test_logger.info("{0} Current Display BPP Value - {1}" .format(time.asctime(), bpp_val))
+                    if check_display():
+                        if int(bpp_val) == 32:
+                            render_images("LVDS", '/opt/lvds/32bpp/')
+                        elif int(bpp_val) == 24:
+                            render_images("LVDS", '/opt/lvds/24bpp/')    
+                        elif int(bpp_val) == 16:
+                            render_images("LVDS", '/opt/lvds/16bpp/')
+                        else:
+                            testutils.test_logger.error("{0} : Cannot locate LVDS image directory.".format(time.asctime()))
+                            err_code = testutils.TEST_RESULT_ERROR
+                            err_str = "{0} : Test Execution Failure..".format(time.asctime())
+                            raise testutils.TestFailureException(err_code, err_str)
                     else:
-                        testutils.test_logger.error("{0} : Cannot locate LVDS image directory.".format(time.asctime()))
-                        err_code = testutils.TEST_RESULT_ERROR
-                        err_str = "{0} : Test Execution Failure..".format(time.asctime())
-                        raise testutils.TestFailureException(err_code, err_str)
-                else:
-                    if int(bpp_val) == 32:
-                        render_images("MIPI", '/opt/mipi/32bpp/')
-                    elif int(bpp_val) == 24:
-                        render_images("MIPI", '/opt/mipi/24bpp/')    
-                    elif int(bpp_val) == 16:
-                        render_images("MIPI", '/opt/mipi/16bpp/')
-                    else:
-                        testutils.test_logger.error("{0} : Cannot locate MIPI image directory.".format(time.asctime()))
-                        err_code = testutils.TEST_RESULT_ERROR
-                        err_str = "{0} : Test Execution Failure..".format(time.asctime())
-                        raise testutils.TestFailureException(err_code, err_str)
-            #           Once called, returns an Error Code with the Error String
-            #           Pass or Fail Message..
+                        if int(bpp_val) == 32:
+                            render_images("MIPI", '/opt/mipi/32bpp/')
+                        elif int(bpp_val) == 24:
+                            render_images("MIPI", '/opt/mipi/24bpp/')    
+                        elif int(bpp_val) == 16:
+                            render_images("MIPI", '/opt/mipi/16bpp/')
+                        else:
+                            testutils.test_logger.error("{0} : Cannot locate MIPI image directory.".format(time.asctime()))
+                            err_code = testutils.TEST_RESULT_ERROR
+                            err_str = "{0} : Test Execution Failure..".format(time.asctime())
+                            raise testutils.TestFailureException(err_code, err_str)
+                            #Once called, returns an Error Code with the Error String
+                            #Pass or Fail Message..
+                except subprocess.CalledProcessError:
+                    testutils.test_logger.fatal("{0} : Test Cmd Execution Failure, cannot proceed.".format(time.asctime()))
+                    err_code = testutils.TEST_RESULT_FATAL
+                    err_str = "{0} : Test Cmd Execution Failure, cannot proceed.".format(time.asctime())
+                    raise testutils.TestFailureException(err_code, err_str)
+            
             
         elif test_case == 16:
             #           Calling the Test Function directly..
@@ -476,35 +479,42 @@ def test_disp_execute_case(test_case):
                 testutils.test_logger.info("{0} ═══════════ TEST_ID :: NB2_DISP_16 : Test Iteration : {1} ═══════════"
                         .format(time.asctime(), idx))
                 bpp = 'cat /sys/devices/platform/display-subsystem/graphics/fb0/bits_per_pixel'
-                testutils.test_logger.info("{0} Checking Display BPP Value." .format(time.asctime()))
-                bpp_val = subprocess.check_output(bpp, shell=True).decode('utf-8')
-                testutils.test_logger.info("{0} Current Display BPP Value - {1}" .format(time.asctime(), bpp_val))
-                if check_display():
-                    if int(bpp_val) == 32:
-                        render_images("LVDS", '/opt/lvds/32bpp/')
-                    elif int(bpp_val) == 24:
-                        render_images("LVDS", '/opt/lvds/24bpp/')    
-                    elif int(bpp_val) == 16:
-                        render_images("LVDS", '/opt/lvds/16bpp/')
+                try:
+                    testutils.test_logger.info("{0} Checking Display BPP Value." .format(time.asctime()))
+                    bpp_val = subprocess.check_output(bpp, shell=True).decode('utf-8')
+                    testutils.test_logger.info("{0} Current Display BPP Value - {1}" .format(time.asctime(), bpp_val))
+                    if check_display():
+                        if int(bpp_val) == 32:
+                            render_images("LVDS", '/opt/lvds/32bpp/')
+                        elif int(bpp_val) == 24:
+                            render_images("LVDS", '/opt/lvds/24bpp/')    
+                        elif int(bpp_val) == 16:
+                            render_images("LVDS", '/opt/lvds/16bpp/')
+                        else:
+                            testutils.test_logger.error("{0} : Cannot locate LVDS image directory.".format(time.asctime()))
+                            err_code = testutils.TEST_RESULT_ERROR
+                            err_str = "{0} : Test Execution Failure..".format(time.asctime())
+                            raise testutils.TestFailureException(err_code, err_str)
                     else:
-                        testutils.test_logger.error("{0} : Cannot locate LVDS image directory.".format(time.asctime()))
-                        err_code = testutils.TEST_RESULT_ERROR
-                        err_str = "{0} : Test Execution Failure..".format(time.asctime())
-                        raise testutils.TestFailureException(err_code, err_str)
-                else:
-                    if int(bpp_val) == 32:
-                        render_images("MIPI", '/opt/mipi/32bpp/')
-                    elif int(bpp_val) == 24:
-                        render_images("MIPI", '/opt/mipi/24bpp/')    
-                    elif int(bpp_val) == 16:
-                        render_images("MIPI", '/opt/mipi/16bpp/')
-                    else:
-                        testutils.test_logger.error("{0} : Cannot locate MIPI image directory.".format(time.asctime()))
-                        err_code = testutils.TEST_RESULT_ERROR
-                        err_str = "{0} : Test Execution Failure..".format(time.asctime())
-                        raise testutils.TestFailureException(err_code, err_str)
-            #           Once called, returns an Error Code with the Error String
-            #           Pass or Fail Message..      
+                        if int(bpp_val) == 32:
+                            render_images("MIPI", '/opt/mipi/32bpp/')
+                        elif int(bpp_val) == 24:
+                            render_images("MIPI", '/opt/mipi/24bpp/')    
+                        elif int(bpp_val) == 16:
+                            render_images("MIPI", '/opt/mipi/16bpp/')
+                        else:
+                            testutils.test_logger.error("{0} : Cannot locate MIPI image directory.".format(time.asctime()))
+                            err_code = testutils.TEST_RESULT_ERROR
+                            err_str = "{0} : Test Execution Failure..".format(time.asctime())
+                            raise testutils.TestFailureException(err_code, err_str)
+            #               Once called, returns an Error Code with the Error String
+            #               Pass or Fail Message..      
+
+                except subprocess.CalledProcessError:
+                    testutils.test_logger.fatal("{0} : Test Cmd Execution Failure, cannot proceed.".format(time.asctime()))
+                    err_code = testutils.TEST_RESULT_FATAL
+                    err_str = "{0} : Test Cmd Execution Failure, cannot proceed.".format(time.asctime())
+                    raise testutils.TestFailureException(err_code, err_str)
 
         elif test_case == 17:
             #           Calling the Test Function directly..
@@ -513,35 +523,42 @@ def test_disp_execute_case(test_case):
                 testutils.test_logger.info("{0} ═══════════ TEST_ID :: NB2_DISP_17 : Test Iteration : {1} ═══════════"
                         .format(time.asctime(), idx))
                 bpp = 'cat /sys/devices/platform/display-subsystem/graphics/fb0/bits_per_pixel'
-                testutils.test_logger.info("{0} Checking Display BPP Value." .format(time.asctime()))
-                bpp_val = subprocess.check_output(bpp, shell=True).decode('utf-8')
-                testutils.test_logger.info("{0} Current Display BPP Value - {1}" .format(time.asctime(), bpp_val))
-                if check_display():
-                    if int(bpp_val) == 32:
-                        render_images("LVDS", '/opt/lvds/32bpp/')
-                    elif int(bpp_val) == 24:
-                        render_images("LVDS", '/opt/lvds/24bpp/')    
-                    elif int(bpp_val) == 16:
-                        render_images("LVDS", '/opt/lvds/16bpp/')
+                try:
+                    testutils.test_logger.info("{0} Checking Display BPP Value." .format(time.asctime()))
+                    bpp_val = subprocess.check_output(bpp, shell=True).decode('utf-8')
+                    testutils.test_logger.info("{0} Current Display BPP Value - {1}" .format(time.asctime(), bpp_val))
+                    if check_display():
+                        if int(bpp_val) == 32:
+                            render_images("LVDS", '/opt/lvds/32bpp/')
+                        elif int(bpp_val) == 24:
+                            render_images("LVDS", '/opt/lvds/24bpp/')    
+                        elif int(bpp_val) == 16:
+                            render_images("LVDS", '/opt/lvds/16bpp/')
+                        else:
+                            testutils.test_logger.error("{0} : Cannot locate LVDS image directory.".format(time.asctime()))
+                            err_code = testutils.TEST_RESULT_ERROR
+                            err_str = "{0} : Test Execution Failure..".format(time.asctime())
+                            raise testutils.TestFailureException(err_code, err_str)
                     else:
-                        testutils.test_logger.error("{0} : Cannot locate LVDS image directory.".format(time.asctime()))
-                        err_code = testutils.TEST_RESULT_ERROR
-                        err_str = "{0} : Test Execution Failure..".format(time.asctime())
-                        raise testutils.TestFailureException(err_code, err_str)
-                else:
-                    if int(bpp_val) == 32:
-                        render_images("MIPI", '/opt/mipi/32bpp/')
-                    elif int(bpp_val) == 24:
-                        render_images("MIPI", '/opt/mipi/24bpp/')    
-                    elif int(bpp_val) == 16:
-                        render_images("MIPI", '/opt/mipi/16bpp/')
-                    else:
-                        testutils.test_logger.error("{0} : Cannot locate MIPI image directory.".format(time.asctime()))
-                        err_code = testutils.TEST_RESULT_ERROR
-                        err_str = "{0} : Test Execution Failure..".format(time.asctime())
-                        raise testutils.TestFailureException(err_code, err_str)
-            #           Once called, returns an Error Code with the Error String
-            #           Pass or Fail Message.. 
+                        if int(bpp_val) == 32:
+                            render_images("MIPI", '/opt/mipi/32bpp/')
+                        elif int(bpp_val) == 24:
+                            render_images("MIPI", '/opt/mipi/24bpp/')    
+                        elif int(bpp_val) == 16:
+                            render_images("MIPI", '/opt/mipi/16bpp/')
+                        else:
+                            testutils.test_logger.error("{0} : Cannot locate MIPI image directory.".format(time.asctime()))
+                            err_code = testutils.TEST_RESULT_ERROR
+                            err_str = "{0} : Test Execution Failure..".format(time.asctime())
+                            raise testutils.TestFailureException(err_code, err_str)
+            #               Once called, returns an Error Code with the Error String
+            #               Pass or Fail Message.. 
+                except subprocess.CalledProcessError:
+                    testutils.test_logger.fatal("{0} : Test Cmd Execution Failure, cannot proceed.".format(time.asctime()))
+                    err_code = testutils.TEST_RESULT_FATAL
+                    err_str = "{0} : Test Cmd Execution Failure, cannot proceed.".format(time.asctime())
+                    raise testutils.TestFailureException(err_code, err_str)
+                    
         elif test_case == 18:
             #           Calling the Test Function directly..
             #           Test Case to check if the Graphics - Driver is loaded or not..
@@ -1355,11 +1372,11 @@ def check_display():
 #
 # # #
 
-def fb_sierpinski(wd, ht, posx, posy):
+def fb_sierpinski():
     testutils.test_logger.info("{0} : Checking if Framebuffer device (fb0) is available.".format(time.asctime()))
     if fb0_enabled:
         testutils.test_logger.info("{0} : Framebuffer (fb0) device is available.".format(time.asctime()))
-        cmd = "WIDTH=" + str(wd) + " HEIGHT=" + str(ht) + " POSX=" + str(posx) + " POSY=" + str(posy) + " fb_sierpinski"
+        cmd = " fb_sierpinski"
         testutils.test_logger.info("{0} : Proceeding test execution for Cmd - {1}.".format(time.asctime(), cmd))
         try:
             ret = subprocess.call(cmd, shell=True)
@@ -1392,11 +1409,11 @@ def fb_sierpinski(wd, ht, posx, posy):
 #
 # # #
 
-def fb_mandelbrot(wd, ht, posx, posy):
+def fb_mandelbrot():
     testutils.test_logger.info("{0} : Checking if Framebuffer device (fb0) is available.".format(time.asctime()))
     if fb0_enabled:
         testutils.test_logger.info("{0} : Framebuffer (fb0) device is available.".format(time.asctime()))
-        cmd = "WIDTH=" + str(wd) + " HEIGHT=" + str(ht) + " POSX=" + str(posx) + " POSY=" + str(posy) + " fb_mandelbrot"
+        cmd = " fb_mandelbrot"
         testutils.test_logger.info("{0} : Proceeding test execution for Cmd - {1}.".format(time.asctime(), cmd))
         try:
             ret = subprocess.call(cmd, shell=True)
@@ -1429,11 +1446,11 @@ def fb_mandelbrot(wd, ht, posx, posy):
 #
 # # #
 
-def fb_rectangle(wd, ht, posx, posy):
+def fb_rectangle():
     testutils.test_logger.info("{0} : Checking if Framebuffer device (fb0) is available.".format(time.asctime()))
     if fb0_enabled:
         testutils.test_logger.info("{0} : Framebuffer (fb0) device is available.".format(time.asctime()))
-        cmd = "WIDTH=" + str(wd) + " HEIGHT=" + str(ht) + " POSX=" + str(posx) + " POSY=" + str(posy) + " fb_rectangle"
+        cmd = "fb_rectangle"
         testutils.test_logger.info("{0} : Proceeding test execution for Cmd - {1}.".format(time.asctime(), cmd))
         try:
             ret = subprocess.call(cmd, shell=True)
