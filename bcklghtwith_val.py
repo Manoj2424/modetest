@@ -2,13 +2,19 @@ import subprocess
 import os
 import time
 
-brightness= '/sys/class/backlight/301802000.mipi-dsi.0/brightness'
-actual_brightness = '/sys/class/backlight/301802000.mipi-dsi.0/actual_brightness'
-
+backlight_path = '/sys/class/backlight/intel_backlight/'
+brightness= '/sys/class/backlight/intel_backlight/brightness'
+actual_brightness = '/sys/class/backlight/intel_backlight/actual_brightness'
 brightness_max_range=255
 
 print("checking for path:")
-if os.path.exists(brightness):	
+if os.path.exists(backlight_path):
+	
+	print("\n")	
+
+	print("Path " + backlight_path + " found:")
+
+	print("\n")	
 
 	x = range(0, brightness_max_range+1, 15)
 	for  brightness_range in x:

@@ -1,0 +1,12 @@
+root@NB2-FPGA-BSP-ALPHA0:~# vbltest -M NB2
+starting count: 8394
+freq: 59.95Hz
+freq: 59.97Hz
+freq: 59.96Hz
+freq: 59.86Hz
+freq: 59.93Hz
+freq: 59.97Hz
+freq: 59.87Hz
+freq: 59.93Hz
+
+root@NB2-FPGA-BSP-ALPHA0:~# 
