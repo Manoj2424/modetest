@@ -1,0 +1,1093 @@
+modetest
+
+
+trying to open device 'i915'...failed
+trying to open device 'amdgpu'...failed
+trying to open device 'radeon'...done
+Encoders:
+id	crtc	type	     possible crtcs	possible clones	
+49	42	TMDS	     0x0000000f	0x00000000
+51	0	TMDS	     0x0000000f	0x00000000
+53	0	TVDAC	0x0000000f	0x00000000
+
+Connectors:
+id	encoder	status		name		size (mm)	modes	encoders
+50	49	connected	HDMI-A-1       	480x270	26	49
+  modes:
+	index name refresh (Hz) hdisp hss hse htot vdisp vss vse vtot)
+  #0 1920x1080 60.00 1920 2008 2052 2200 1080 1084 1089 1125 148500 flags: phsync, pvsync; type: preferred, driver
+  
+  props:
+	1 EDID:
+		flags: immutable blob
+		blobs:
+
+		value:
+			00ffffffffffff0010ac54d054584a30
+			3218010380301b78ea16c5a456509f26
+			125054a54b00714f8180d1c001010101
+			010101010101023a801871382d40582c
+			4500dc0b1100001e000000ff00314d56
+			4431344339304a58540a000000fc0044
+			454c4c2053323234304c0a20000000fd
+			00384c1e5311000a202020202020010c
+			02031ff14c9005040302071601141f12
+			13230907078301000065030c00100002
+			3a801871382d40582c4500dc0b110000
+			1e011d8018711c1620582c2500dc0b11
+			00009e011d007251d01e206e285500dc
+			0b1100001e8c0ad08a20e02d10103e96
+			00dc0b11000018000000000000000000
+			000000000000000000000000000000b7
+	2 DPMS:
+		flags: enum
+		enums: On=0 Standby=1 Suspend=2 Off=3
+		value: 0
+	5 link-status:
+		flags: enum
+		enums: Good=0 Bad=1
+		value: 0
+	6 non-desktop:
+		flags: immutable range
+		values: 0 1
+		value: 0
+	4 TILE:
+		flags: immutable blob
+		blobs:
+
+		value:
+	31 coherent:
+		flags: range
+		values: 0 1
+		value: 1
+	35 underscan:
+		flags: enum
+		enums: off=0 on=1 auto=2
+		value: 0
+	36 underscan hborder:
+		flags: range
+		values: 0 128
+		value: 0
+	37 underscan vborder:
+		flags: range
+		values: 0 128
+		value: 0
+	39 dither:
+		flags: enum
+		enums: off=0 on=1
+		value: 0
+	33 scaling mode:
+		flags: enum
+		enums: None=0 Full=1 Center=2 Full aspect=3
+		value: 0
+	38 audio:
+		flags: enum
+		enums: off=0 on=1 auto=2
+		value: 2
+	40 output_csc:
+		flags: enum
+		enums: bypass=0 tvrgb=1 ycbcr601=2 ycbcr709=3
+		value: 0
+52	0	disconnected	DVI-D-1        	0x0		0	51
+  props:
+	1 EDID:
+		flags: immutable blob
+		blobs:
+
+		value:
+	2 DPMS:
+		flags: enum
+		enums: On=0 Standby=1 Suspend=2 Off=3
+		value: 0
+	5 link-status:
+		flags: enum
+		enums: Good=0 Bad=1
+		value: 0
+	6 non-desktop:
+		flags: immutable range
+		values: 0 1
+		value: 0
+	4 TILE:
+		flags: immutable blob
+		blobs:
+
+		value:
+	31 coherent:
+		flags: range
+		values: 0 1
+		value: 1
+	35 underscan:
+		flags: enum
+		enums: off=0 on=1 auto=2
+		value: 0
+	36 underscan hborder:
+		flags: range
+		values: 0 128
+		value: 0
+	37 underscan vborder:
+		flags: range
+		values: 0 128
+		value: 0
+	39 dither:
+		flags: enum
+		enums: off=0 on=1
+		value: 0
+	33 scaling mode:
+		flags: enum
+		enums: None=0 Full=1 Center=2 Full aspect=3
+		value: 0
+	38 audio:
+		flags: enum
+		enums: off=0 on=1 auto=2
+		value: 2
+	40 output_csc:
+		flags: enum
+		enums: bypass=0 tvrgb=1 ycbcr601=2 ycbcr709=3
+		value: 0
+54	0	disconnected	VGA-1          	0x0		0	53
+  props:
+	1 EDID:
+		flags: immutable blob
+		blobs:
+
+		value:
+	2 DPMS:
+		flags: enum
+		enums: On=0 Standby=1 Suspend=2 Off=3
+		value: 0
+	5 link-status:
+		flags: enum
+		enums: Good=0 Bad=1
+		value: 0
+	6 non-desktop:
+		flags: immutable range
+		values: 0 1
+		value: 0
+	4 TILE:
+		flags: immutable blob
+		blobs:
+
+		value:
+	32 load detection:
+		flags: range
+		values: 0 1
+		value: 1
+	33 scaling mode:
+		flags: enum
+		enums: None=0 Full=1 Center=2 Full aspect=3
+		value: 0
+	40 output_csc:
+		flags: enum
+		enums: bypass=0 tvrgb=1 ycbcr601=2 ycbcr709=3
+		value: 0
+
+CRTCs:
+id	fb	pos	size
+42	55	(0,0)	(1920x1080)
+  #0 1920x1080 60.00 1920 2008 2052 2200 1080 1084 1089 1125 148500 flags: phsync, pvsync; type: preferred, driver
+  props:
+44	0	(0,0)	(0x0)
+  #0  nan 0 0 0 0 0 0 0 0 0 flags: ; type: 
+  props:
+46	0	(0,0)	(0x0)
+  #0  nan 0 0 0 0 0 0 0 0 0 flags: ; type: 
+  props:
+48	0	(0,0)	(0x0)
+  #0  nan 0 0 0 0 0 0 0 0 0 flags: ; type: 
+  props:
+
+Planes:
+id	crtc	fb	CRTC x,y	x,y	gamma size	possible crtcs
+41	42	55	0,0		0,0	0       	0x00000001
+  formats: XR24 AR24
+  props:
+	8 type:
+		flags: immutable enum
+		enums: Overlay=0 Primary=1 Cursor=2
+		value: 1
+43	0	0	0,0		0,0	0       	0x00000002
+  formats: XR24 AR24
+  props:
+	8 type:
+		flags: immutable enum
+		enums: Overlay=0 Primary=1 Cursor=2
+		value: 1
+45	0	0	0,0		0,0	0       	0x00000004
+  formats: XR24 AR24
+  props:
+	8 type:
+		flags: immutable enum
+		enums: Overlay=0 Primary=1 Cursor=2
+		value: 1
+47	0	0	0,0		0,0	0       	0x00000008
+  formats: XR24 AR24
+  props:
+	8 type:
+		flags: immutable enum
+		enums: Overlay=0 Primary=1 Cursor=2
+		value: 1
+
+Frame buffers:
+id	size	pitch
+
+modetest -c
+
+trying to open device 'i915'...failed
+trying to open device 'amdgpu'...failed
+trying to open device 'radeon'...done
+Connectors:
+id	encoder	status		name		size (mm)	modes	encoders
+50	49	connected	HDMI-A-1       	480x270		26	49
+  modes:
+	index name refresh (Hz) hdisp hss hse htot vdisp vss vse vtot)
+  #0 1920x1080 60.00 1920 2008 2052 2200 1080 1084 1089 1125 148500 flags: phsync, pvsync; type: preferred, driver
+  
+  props:
+	1 EDID:
+		flags: immutable blob
+		blobs:
+
+		value:
+			00ffffffffffff0010ac54d054584a30
+			3218010380301b78ea16c5a456509f26
+			125054a54b00714f8180d1c001010101
+			010101010101023a801871382d40582c
+			4500dc0b1100001e000000ff00314d56
+			4431344339304a58540a000000fc0044
+			454c4c2053323234304c0a20000000fd
+			00384c1e5311000a202020202020010c
+			02031ff14c9005040302071601141f12
+			13230907078301000065030c00100002
+			3a801871382d40582c4500dc0b110000
+			1e011d8018711c1620582c2500dc0b11
+			00009e011d007251d01e206e285500dc
+			0b1100001e8c0ad08a20e02d10103e96
+			00dc0b11000018000000000000000000
+			000000000000000000000000000000b7
+	2 DPMS:
+		flags: enum
+		enums: On=0 Standby=1 Suspend=2 Off=3
+		value: 0
+	5 link-status:
+		flags: enum
+		enums: Good=0 Bad=1
+		value: 0
+	6 non-desktop:
+		flags: immutable range
+		values: 0 1
+		value: 0
+	4 TILE:
+		flags: immutable blob
+		blobs:
+
+		value:
+	31 coherent:
+		flags: range
+		values: 0 1
+		value: 1
+	35 underscan:
+		flags: enum
+		enums: off=0 on=1 auto=2
+		value: 0
+	36 underscan hborder:
+		flags: range
+		values: 0 128
+		value: 0
+	37 underscan vborder:
+		flags: range
+		values: 0 128
+		value: 0
+	39 dither:
+		flags: enum
+		enums: off=0 on=1
+		value: 0
+	33 scaling mode:
+		flags: enum
+		enums: None=0 Full=1 Center=2 Full aspect=3
+		value: 0
+	38 audio:
+		flags: enum
+		enums: off=0 on=1 auto=2
+		value: 2
+	40 output_csc:
+		flags: enum
+		enums: bypass=0 tvrgb=1 ycbcr601=2 ycbcr709=3
+		value: 0
+52	0	disconnected	DVI-D-1        	0x0		0	51
+  props:
+	1 EDID:
+		flags: immutable blob
+		blobs:
+
+		value:
+	2 DPMS:
+		flags: enum
+		enums: On=0 Standby=1 Suspend=2 Off=3
+		value: 0
+	5 link-status:
+		flags: enum
+		enums: Good=0 Bad=1
+		value: 0
+	6 non-desktop:
+		flags: immutable range
+		values: 0 1
+		value: 0
+	4 TILE:
+		flags: immutable blob
+		blobs:
+
+		value:
+	31 coherent:
+		flags: range
+		values: 0 1
+		value: 1
+	35 underscan:
+		flags: enum
+		enums: off=0 on=1 auto=2
+		value: 0
+	36 underscan hborder:
+		flags: range
+		values: 0 128
+		value: 0
+	37 underscan vborder:
+		flags: range
+		values: 0 128
+		value: 0
+	39 dither:
+		flags: enum
+		enums: off=0 on=1
+		value: 0
+	33 scaling mode:
+		flags: enum
+		enums: None=0 Full=1 Center=2 Full aspect=3
+		value: 0
+	38 audio:
+		flags: enum
+		enums: off=0 on=1 auto=2
+		value: 2
+	40 output_csc:
+		flags: enum
+		enums: bypass=0 tvrgb=1 ycbcr601=2 ycbcr709=3
+		value: 0
+54	0	disconnected	VGA-1          	0x0		0	53
+  props:
+	1 EDID:
+		flags: immutable blob
+		blobs:
+
+		value:
+	2 DPMS:
+		flags: enum
+		enums: On=0 Standby=1 Suspend=2 Off=3
+		value: 0
+	5 link-status:
+		flags: enum
+		enums: Good=0 Bad=1
+		value: 0
+	6 non-desktop:
+		flags: immutable range
+		values: 0 1
+		value: 0
+	4 TILE:
+		flags: immutable blob
+		blobs:
+
+		value:
+	32 load detection:
+		flags: range
+		values: 0 1
+		value: 1
+	33 scaling mode:
+		flags: enum
+		enums: None=0 Full=1 Center=2 Full aspect=3
+		value: 0
+	40 output_csc:
+		flags: enum
+		enums: bypass=0 tvrgb=1 ycbcr601=2 ycbcr709=3
+		value: 0
+
+modetest -e
+
+trying to open device 'i915'...failed
+trying to open device 'amdgpu'...failed
+trying to open device 'radeon'...done
+Encoders:
+id	crtc	type	possible crtcs	possible clones	
+49	42	TMDS	0x0000000f	0x00000000
+51	0	TMDS	0x0000000f	0x00000000
+53	0	TVDAC	0x0000000f	0x00000000
+
+
+modetest -f 
+
+trying to open device 'i915'...failed
+trying to open device 'amdgpu'...failed
+trying to open device 'radeon'...done
+Frame buffers:
+id	size	pitch
+modetest -p
+
+trying to open device 'i915'...failed
+trying to open device 'amdgpu'...failed
+trying to open device 'radeon'...done
+CRTCs:
+id	fb	pos	size
+42	55	(0,0)	(1920x1080)
+  #0 1920x1080 60.00 1920 2008 2052 2200 1080 1084 1089 1125 148500 flags: phsync, pvsync; type: preferred, driver
+  props:
+44	0	(0,0)	(0x0)
+  #0  nan 0 0 0 0 0 0 0 0 0 flags: ; type: 
+  props:
+46	0	(0,0)	(0x0)
+  #0  nan 0 0 0 0 0 0 0 0 0 flags: ; type: 
+  props:
+48	0	(0,0)	(0x0)
+  #0  nan 0 0 0 0 0 0 0 0 0 flags: ; type: 
+  props:
+
+Planes:
+id	crtc	fb	CRTC x,y	x,y	gamma size	possible crtcs
+41	42	55	0,0		0,0	0       	0x00000001
+  formats: XR24 AR24
+  props:
+	8 type:
+		flags: immutable enum
+		enums: Overlay=0 Primary=1 Cursor=2
+		value: 1
+43	0	0	0,0		0,0	0       	0x00000002
+  formats: XR24 AR24
+  props:
+	8 type:
+		flags: immutable enum
+		enums: Overlay=0 Primary=1 Cursor=2
+		value: 1
+45	0	0	0,0		0,0	0       	0x00000004
+  formats: XR24 AR24
+  props:
+	8 type:
+		flags: immutable enum
+		enums: Overlay=0 Primary=1 Cursor=2
+		value: 1
+47	0	0	0,0		0,0	0       	0x00000008
+  formats: XR24 AR24
+  props:
+	8 type:
+		flags: immutable enum
+		enums: Overlay=0 Primary=1 Cursor=2
+		value: 1
+Introduction to libdrm
+Libdrm provides a user space library for accessing the DRM, direct rendering manager, on operating systems that support the ioctl interface. libdrm is a low-level library, typically used by graphics drivers such as the Mesa DRI drivers, the X drivers, libva and similar projects.
+This package is known to build and work properly using an LFS-11.0 platform.
+libdrm Dependencies
+Recommended
+Xorg Libraries (for Intel KMS API support required by Mesa)
+Installation of libdrm
+Install libdrm by running the following commands:
+mkdir build &&
+cd    build &&
+
+meson --prefix=$XORG_PREFIX \
+      --buildtype=release   \
+      -Dudev=true           \
+      -Dvalgrind=false      &&
+ninja
+To check the results, issue ninja test.
+Now, as the root user:
+ninja instal
+
+Download (HTTP): https://dri.freedesktop.org/libdrm/libdrm-2.4.107.tar.xz
+Command Explanations
+--buildtype=release: Specify a buildtype suitable for stable releases of the package, as the default may produce unoptimized binaries.
+-Dudev=true: This parameter enables support for using Udev instead of mknod.
+-Dvalgrind=false: This parameter disables building libdrm with valgrind support. This fixes building sysprof and other packages that use libdrm. Change this parameter to "true" if you need support for valgrind.
+Contents
+Installed Programs:None
+Installed Libraries:libdrm_amdgpu.so, libdrm_intel.so, libdrm_nouveau.so, libdrm_radeon.so, libdrm.so, and libkms.so
+Installed Directories:/usr/include/libdrm, /usr/include/libkms, and /usr/share/libdrm
+Short Descriptions
+libdrm_amdgpu.so
+contains the AMDGPU specific Direct Rendering Manager functions
+libdrm_intel.so
+contains the Intel specific Direct Rendering Manager functions
+libdrm_nouveau.so
+contains the open source nVidia (Nouveau) specific Direct Rendering Manager functions
+libdrm_radeon.so
+contains the AMD Radeon specific Direct Rendering Manager functions
+libdrm.so
+contains the Direct Rendering Manager API functions
+libkms.so
+contains API functions for kernel mode setting abstraction
+
+
+    • The Direct Rendering Manager (DRM) is a subsystem of the Linux kernel responsible for interfacing with GPUs of modern video cards.
+    • exposes an API that user-space programs can use to send commands and data to the GPU and perform operations such as configuring the mode setting of the display. 
+    • User-space programs can use the DRM API to command the GPU to do hardware-accelerated 3D rendering and video decoding, as well as GPGPU computing.
+
+
+
+{
+
+Mode setting
+Mode setting is a software operation that activates a display mode (screen resolution, color depth, and refresh rate) for a computer's display controller by using VESA BIOS Extensions or UEFI Graphics extensions (on more modern computers).
+Kernel mode-setting is more flexible and allows displaying of an error in the case of a fatal system error in the kernel, even when using a user-space display server.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+(Regulating access to the hardware is a fundamental kernel task. The Direct Rendering Manager and KMS are part of the Linux kernel. The KMS does only the mode setting.)
+
+
+The Linux kernel got the prerequisite for kernel-based mode setting by accepting Intel GEM.
+
+replaced by Tungstens Graphics TTM (Translation Table Maps) memory manager which supports the GEM API.[2] TTM was developed for the free and open-source drivers for Radeon and S3 Graphics graphic chipsets (see Free and open-source graphics device driver)
+
+}
+
+
+
+The Linux kernel already had an API called fbdev, used to manage the framebuffer of a graphics adapter,[2] but it couldn't be used to handle the needs of modern 3D-accelerated GPU-based video hardware.
+
+user-space programs (such as the X Server) directly managed these resources, but they usually acted as if they were the only ones with access to them. When two or more programs tried to control the same hardware at the same time, and set its resources each one in its own way, most times they ended catastrophically
+
+The DRM gets exclusive access to the GPU and is responsible for initializing and maintaining the command queue, memory, and any other hardware resource. 
+
+
+Without drm 
+
+with drm
+
+
+Some of these expansions were given specific names, such as Graphics Execution Manager (GEM) or kernel mode-setting (KMS), and the terminology prevails when the functionality they provide is specifically alluded. But they are really parts of the whole kernel DRM subsystem.
+
+user-space programs must use kernel system calls to request its services.
+
+Each GPU detected by DRM is referred to as a DRM device, and a device file /dev/dri/cardX (where X is a sequential number) is created to interface with it
+
+A library called libdrm was created to facilitate the interface of user-space programs with the DRM subsystem. This library is merely a wrapper that provides a function written in C for every ioctl of the DRM API, as well as constants, structures and other helper elements
+
+DRM consists of two parts: a generic "DRM core" and a specific one ("DRM driver") for each type of supported hardware.[11] DRM core provides the basic framework where different DRM drivers can register and also provides to user space a minimal set of ioctls with common, hardware-independent functionality.[8] A DRM driver, on the other hand, implements the hardware-dependent part of the API, specific to the type of GPU it supports; it should provide the implementation of the remaining ioctls not covered by DRM core, but it may also extend the API, offering additional ioctls with extra functionality only available on such hardware
+
+
+KMS
+
+
+(There must be a "DRM master" in user-space, this program has exclusive access to KMS.)
+
+In order to work properly, a video card or graphics adapter must set a mode—a combination of screen resolution, color depth and refresh rate—that is within the range of values supported by itself and the attached display screen. This operation is called mode-setting, A mode-setting operation must be performed before starting to use the framebuffer, and also when the mode is required to change by an application or the user.	
+
+early days - graphical framebuffer were also responsible for providing the mode-setting operations. In Unix-type operating systems, the X Server was the most prominent example, and its mode-setting implementation lived in the DDX driver for each specific type of video card
+This approach, later referred as User space Mode-Setting or UMS
+It not only breaks the isolation that operating systems should provide between programs and hardware, raising both stability and security concerns, but also could leave the graphics hardware in an inconsistent state if two or more user space programs try to do the mode-setting at the same time
+
+Linux kernel framebuffer driver contained mode-setting code to configure framebuffer devices.[2] To avoid mode-setting conflicts, the XFree86 Server—and later the X.Org Server—handled the case when the user switched from the graphical environment to a text virtual console by saving its mode-setting state, and restoring it when the user switched back to X.[41] This process caused an annoying flicker in the transition, and also can fail, leading to a corrupted or unusable output display
+
+The new kernel API and code added to the DRM module to perform these mode-setting operations was called Kernel Mode-Setting (KMS)
+
+
+
+advt- The most immediate is of course the removal of duplicate mode-setting code, from both the kernel (Linux console, fbdev) and user space (X Server DDX drivers). KMS also makes it easier to write alternative graphics systems, which now don't need to implement their own mode-setting code.
+The fact that KMS is part of the kernel allows it to use resources only available at kernel space such as interrupts.
+For example, the mode recovery after a suspend/resume process simplifies a lot by being managed by the kernel itself, and incidentally improves security (no more user space tools requiring root permissions).
+
+KMS has been adopted to such an extent that certain drivers which lack 3D acceleration (or for which the hardware vendor doesn't want to expose or implement it) nevertheless implement the KMS API without the rest of the DRM API.
+
+Kms blocks are
+
+CRTCs: each CRTC (from CRT Controller[48][33]) represents a scanout engine of the display controller, pointing to a scanout buffer (framebuffer).[47] The purpose of a CRTC is to read the pixel data currently in the scanout buffer and generate from it the video mode timing signal with the help of a PLL circuit.[49] The number of CRTCs available determines how many independent output devices can the hardware handle at the same time, so in order to use multi-head configurations at least one CRTC per display device is required.[47] Two—or more—CRTCs can also work in clone mode if they scan out from the same framebuffer to send the same image to several output devices.
+
+
+
+Connectors: a connector represents where the display controller sends the video signal from a scanout operation to be displayed. Usually, the KMS concept of a connector corresponds to a physical connector (VGA, DVI, FPD-Link, HDMI, DisplayPort, S-Video, ...) in the hardware where an output device (monitor, laptop panel, ...) is permanently or can temporarily be attached. Information related to the current physically attached output device—such as connection status, EDID data, DPMS status or supported video modes—is also stored within the connector
+
+
+{
+	Extended Display Identification Data (EDID) is a metadata format for display devices to describe their capabilities to a video source (e.g. graphics card or set-top box). The data format is defined by a standard published by the Video Electronics Standards Association (VESA).
+The EDID data structure includes manufacturer name and serial number, product type, phosphor or filter type (as chromaticity data), timings supported by the display, display size, luminance data and (for digital displays only) pixel mapping data.
+DisplayID is a VESA standard targeted to replace EDID and E-EDID extensions with a uniform format suited for both PC monitor and consumer electronics devices.
+
+10ac – 1000010101100 - EL
+All CTA standards are free to everyone since May 2018
+VESA Display Power Management Signaling (or DPMS) is a standard from the VESA consortium for power management of video monitors. Example usage includes turning off, or putting the monitor into standby after a period of idle time to save power. Some commercial displays also incorporate this technology.
+The standard defines how to signal the H-sync and V-sync pins in a standard SVGA monitor to trigger the monitor's power saving capabilities.
+DPMS defines four modes; normal, standby, suspended and off. When in the "off" state some power may still be drawn in order to power indicator lights.
+The standard is:
+State
+H-sync
+V-sync
+Power
+Recovery Time[2]
+On
+On
+On
+100%
+n/a
+Stand-by
+Off
+On
+< 80%
+~1 Sec.
+Suspend
+On
+Off
+< 30W
+~5 Sec.
+Off
+Off
+Off
+< 8W
+~20 Sec.
+
+
+}
+
+Encoders: the display controller must encode the video mode timing signal from the CRTC using a format suitable for the intended connector.[47] An encoder represents the hardware block able to do one of these encodings. Examples of encodings—for digital outputs—are TMDS and LVDS; for analog outputs such as VGA and TV out, specific DAC blocks are generally used. A connector can only receive the signal from one encoder at a time,[47] and each type of connector only supports some encodings. There also might be additional physical restrictions by which not every CRTC is connected to every available encoder, limiting the possible combinations of CRTC-encoder-connector.
+
+DRM_MODE_ENCODER_DAC for VGA and analog on DVI-I/DVI-A
+    • DRM_MODE_ENCODER_TMDS for DV I, HDMI and (embedded) DisplayPort
+    • DRM_MODE_ENCODER_LVDS for display panels
+    • DRM_MODE_ENCODER_TVDAC for TV output (Composite, S-Video, Component, SCART)
+    • DRM_MODE_ENCODER_VIRTUAL for virtual machine displays
+Encoders must be attached to a CRTC to be used. DRM drivers leave encoders unattached at initialization time. Applications (or the fbdev compatibility layer when implemented) are responsible for attaching the encoders they want to use to a CRTC.
+
+Planes: a plane is not a hardware block but a memory object containing a buffer from which a scanout engine (a CRTC) is fed. The plane that holds the framebuffer is called the primary plane, 
+Each CRTC must have one associated,[47] since it's the source for the CRTC to determine the video mode—display resolution (width and height), pixel size, pixel format, refresh rate, etc. 
+A CRTC might have also cursor planes associated to it if the display controller supports hardware cursor overlays, or secondary planes if it's able to scan out from additional hardware overlays and compose or blend "on the fly" the final image sent to the output device
+
+fbset
+[sudo] password for manoj: 
+
+mode "1920x1080"
+    geometry 1920 1080 1920 1080 32
+    timings 0 0 0 0 0 0 0
+    accel true
+    rgba 8/16,8/8,8/0,0/0
+endmode
+
+
+
+fbset [options] [mode]
+
+Valid options:
+  General options:
+    -h, --help         : display this usage information
+    --test             : don't change, just test whether the mode is valid
+    -s, --show         : display video mode settings
+    -i, --info         : display all frame buffer information
+    -v, --verbose      : verbose mode
+    -V, --version      : print version information
+    -x, --xfree86      : XFree86 compatibility mode
+    -a, --all          : change all virtual consoles on this device
+  Frame buffer special device nodes:
+    -fb <device>       : processed frame buffer device
+                         (default is /dev/fb0)
+  Video mode database:
+    -db <file>         : video mode database file
+                         (default is /etc/fb.modes)
+  Display geometry:
+    -xres <value>      : horizontal resolution (in pixels)
+    -yres <value>      : vertical resolution (in pixels)
+    -vxres <value>     : virtual horizontal resolution (in pixels)
+    -vyres <value>     : virtual vertical resolution (in pixels)
+    -depth <value>     : display depth (in bits per pixel)
+    -nonstd <value>    : select nonstandard video mode
+    -g, --geometry ... : set all geometry parameters at once
+    -match             : set virtual vertical resolution by virtual resolution
+  Display timings:
+    -pixclock <value>  : pixel clock (in picoseconds)
+    -left <value>      : left margin (in pixels)
+    -right <value>     : right margin (in pixels)
+    -upper <value>     : upper margin (in pixel lines)
+    -lower <value>     : lower margin (in pixel lines)
+    -hslen <value>     : horizontal sync length (in pixels)
+    -vslen <value>     : vertical sync length (in pixel lines)
+    -t, --timings ...  : set all timing parameters at once
+  Display flags:
+    -accel <value>     : hardware text acceleration enable (false or true)
+    -hsync <value>     : horizontal sync polarity (low or high)
+    -vsync <value>     : vertical sync polarity (low or high)
+    -csync <value>     : composite sync polarity (low or high)
+    -gsync <value>     : synch on green (false or true)
+    -extsync <value>   : external sync enable (false or true)
+    -sync <value>      : custom (driver specific) sync value
+    -bcast <value>     : broadcast enable (false or true)
+    -laced <value>     : interlace enable (false or true)
+    -double <value>    : doublescan enable (false or true)
+    -rgba <r,g,b,a>    : recommended length of color entries
+    -grayscale <value> : grayscale enable (false or true)
+  Display positioning:
+    -move <direction>  : move the visible part (left, right, up or down)
+    -step <value>      : step increment (in pixels or pixel lines)
+                         (default is 8 horizontal, 2 vertical)
+
+
+Some modetest commands
+Here are some useful commands:
+Display a basic test pattern with selected geometry (Don't press "enter" again until you're done) on the HDMI monitor:
+modetest -M atmel-hlcdc -s 6@15:1024x768
+Larger resolution if the HDMI connected monitor supports it:
+modetest -M atmel-hlcdc -s 6@15:1680x1050
+Now same test patern on the LCD PDA 7" display:
+modetest -M atmel-hlcdc -s 8@15:800x480
+or (if the HDMI cable is not connected):
+modetest -M atmel-hlcdc -s 6@14:800x480
+A test patern for background + a 300x200 overlay at 150 and 50 location:
+modetest -M atmel-hlcdc -s 8@15:800x480 -P 15:300x200+150+50
+
+Here is the output of this last command (HDMI screen unplugged):
+root@sama5d4ek:~# modetest -M atmel-hlcdc -s 8@15:800x480 -P 15:300x200+150+50
+setting mode 800x480@XR24 on connectors 8, crtc 15
+testing 300x200@XR24 overlay plane 12
+PDA 4" on sama5d2:
+modetest -M atmel-hlcdc -s 6@13:480x272
+
+
+
+root@mixer_proj:~# modetest -M xlnx
+Output should include information about the Encoder, Connector, CRTC (the Mixer), Planes (Mixer layers). All Mixer layers will be deactivate by invoking modetest so the screen should become a solid hue of blue (the default background color).
+Below is a Sample output of 2019.1 SDI-Tx with 10bpc as the encoder (edited for brevity and clarity):
+root@zcu106-zynqmp:~# modetest -M xlnx
+Encoders:
+id      crtc    type    possible crtcs  possible clones
+48      0       TMDS    0x00000001      0x00000000
+ 
+Connectors:
+id      encoder status          name            size (mm)       modes   encoders
+ 49      0       connected       unknown-1       0x0             49      48
+   modes:
+         name refresh (Hz) hdisp hss hse htot vdisp vss vse vtot)
+   4096x2160 60 4096 4184 4272 4400 2160 2168 2178 2250 593408 flags: phsync, pvsync; type: driver
+   4096x2160 50 4096 5064 5152 5280 2160 2168 2178 2250 594000 flags: phsync, pvsync; type: driver
+      <snip>
+   1280x720 24 1280 2250 3155 4125 720 725 730 750 74250 flags: phsync, pvsync; type: driver
+   720x576i 50 720 732 795 864 288 290 293 312 13500 flags: phsync, pvsync, interlace, dblclk; type: driver
+   720x486i 60 720 739 801 858 243 247 250 262 13500 flags: phsync, pvsync, interlace, dblclk; type: driver
+   props:
+         1 EDID:
+                 flags: immutable blob
+                 blobs:
+ 
+                value:
+         2 DPMS:
+                 flags: enum
+                 enums: On=0 Standby=1 Suspend=2 Off=3
+                 value: 3
+         5 link-status:
+                 flags: enum
+                 enums: Good=0 Bad=1
+                 value: 0       <snip>
+        51 sdi_mode:
+                 flags: range
+                 values: 0 5
+                 value: 2
+         52 sdi_data_stream:
+                 flags: range
+                 values: 2 8
+                 value: 4
+         
+CRTCs:
+id      fb      pos     size
+47      0       (0,0)   (0x0)
+    0 0 0 0 0 0 0 0 0 0 flags: ; type:
+   props:
+ 
+Planes:
+id      crtc    fb      CRTC x,y        x,y     gamma size      possible crtcs
+29      0       0       0,0             0,0     0               0x00000001
+   formats: RA24
+   props:
+         6 type:
+                 flags: immutable enum
+                 enums: Overlay=0 Primary=1 Cursor=2
+                 value: 2
+         27 scale:
+                 flags: range
+                 values: 0 2
+                 value: 0
+         28 alpha:
+                 flags: range
+                 values: 0 256
+                 value: 256 30      0       0       0,0             0,0     0               0x00000001
+   formats: YUYV
+   props:
+         6 type:
+                 flags: immutable enum
+                 enums: Overlay=0 Primary=1 Cursor=2
+                 value: 0
+         27 scale:
+                 flags: range
+                 values: 0 2
+                 value: 0
+         28 alpha:
+                 flags: range
+                 values: 0 256
+                 value: 256 31      0       0       0,0             0,0     0               0x00000001
+   formats: XV15
+   props:
+         6 type:
+                 flags: immutable enum
+                 enums: Overlay=0 Primary=1 Cursor=2
+                 value: 0
+         27 scale:
+                 flags: range
+                 values: 0 2
+                 value: 0
+         28 alpha:
+                 flags: range
+                 values: 0 256
+                 value: 256 32      0       0       0,0             0,0     0               0x00000001
+   formats: AB24
+   props:
+         6 type:
+                 flags: immutable enum
+                 enums: Overlay=0 Primary=1 Cursor=2
+                 value: 0
+         27 scale:
+                 flags: range
+                 values: 0 2
+                 value: 0
+         28 alpha:
+                 flags: range
+                 values: 0 256
+                 value: 256 33      0       0       0,0             0,0     0               0x00000001
+   formats: BG24
+   props:
+         6 type:
+                 flags: immutable enum
+                 enums: Overlay=0 Primary=1 Cursor=2
+                 value: 0
+         27 scale:
+                 flags: range
+                 values: 0 2
+                 value: 0
+         28 alpha:
+                 flags: range
+                 values: 0 256
+                 value: 256 34      0       0       0,0             0,0     0               0x00000001
+   formats: XB24
+   props:
+         6 type:
+                 flags: immutable enum
+                 enums: Overlay=0 Primary=1 Cursor=2
+                 value: 0
+         27 scale:
+                 flags: range
+                 values: 0 2
+                 value: 0
+         28 alpha:
+                 flags: range
+                 values: 0 256
+                 value: 256 35      0       0       0,0             0,0     0               0x00000001
+   formats: NV12
+   props:
+         6 type:
+                 flags: immutable enum
+                 enums: Overlay=0 Primary=1 Cursor=2
+                 value: 0
+         27 scale:
+                 flags: range
+                 values: 0 2
+                 value: 0
+         28 alpha:
+                 flags: range
+                 values: 0 256
+                 value: 256 36      0       0       0,0             0,0     0               0x00000001
+   formats: XV20
+   props:
+         6 type:
+                 flags: immutable enum
+                 enums: Overlay=0 Primary=1 Cursor=2
+                 value: 0
+         27 scale:
+                 flags: range
+                 values: 0 2
+                 value: 0
+         28 alpha:
+                 flags: range
+                 values: 0 256
+                 value: 256 37      0       0       0,0             0,0     0               0x00000001
+   formats: BG24
+   props:
+         6 type:
+                 flags: immutable enum
+                 enums: Overlay=0 Primary=1 Cursor=2
+                 value: 0
+         27 scale:
+                 flags: range
+                 values: 0 2
+                 value: 0
+         28 alpha:
+                 flags: range
+                 values: 0 256
+                 value: 256 38      0       0       0,0             0,0     0               0x00000001
+   formats: RG24
+   props:
+         6 type:
+                 flags: immutable enum
+                 enums: Overlay=0 Primary=1 Cursor=2
+                 value: 0
+         28 alpha:
+                 flags: range
+                 values: 0 256
+                 value: 256 39      0       0       0,0             0,0     0               0x00000001
+   formats: RG24
+   props:
+         6 type:
+                 flags: immutable enum
+                 enums: Overlay=0 Primary=1 Cursor=2
+                 value: 0
+         28 alpha:
+                 flags: range
+                 values: 0 256
+                 value: 256 40      0       0       0,0             0,0     0               0x00000001
+   formats: RG24
+   props:
+         6 type:
+                 flags: immutable enum
+                 enums: Overlay=0 Primary=1 Cursor=2
+                 value: 0
+         28 alpha:
+                 flags: range
+                 values: 0 256
+                 value: 256 41      0       0       0,0             0,0     0               0x00000001
+   formats: RG24
+   props:
+         6 type:
+                 flags: immutable enum
+                 enums: Overlay=0 Primary=1 Cursor=2
+                 value: 0
+         28 alpha:
+                 flags: range
+                 values: 0 256
+                 value: 256 42      0       0       0,0             0,0     0               0x00000001
+   formats: RG24
+   props:
+         6 type:
+                 flags: immutable enum
+                 enums: Overlay=0 Primary=1 Cursor=2
+                 value: 0
+         28 alpha:
+                 flags: range
+                 values: 0 256
+                 value: 256 43      0       0       0,0             0,0     0               0x00000001
+   formats: RG24
+   props:
+         6 type:
+                 flags: immutable enum
+                 enums: Overlay=0 Primary=1 Cursor=2
+                 value: 0
+         28 alpha:
+                 flags: range
+                 values: 0 256
+                 value: 256 44      0       0       0,0             0,0     0               0x00000001
+   formats: RG24
+   props:
+         6 type:
+                 flags: immutable enum
+                 enums: Overlay=0 Primary=1 Cursor=2
+                 value: 0
+         28 alpha:
+                 flags: range
+                 values: 0 256
+                 value: 256 45      0       0       0,0             0,0     0               0x00000001
+   formats: RG24
+   props:
+         6 type:
+                 flags: immutable enum
+                 enums: Overlay=0 Primary=1 Cursor=2
+                 value: 0
+         28 alpha:
+                 flags: range
+                 values: 0 256
+                 value: 256 46      0       0       0,0             0,0     0               0x00000001
+   formats: XV20
+   props:
+         6 type:
+                 flags: immutable enum
+                 enums: Overlay=0 Primary=1 Cursor=2
+                 value: 1
+ 
+Frame buffers:
+ id      size    pitch
+Test 2 - Activate an overlay layer
+We will activate an overlay plane (RGB in this case) and position it to the top left corner while the background color is being generated using the following command:
+root@mixer_proj:~# modetest -M xlnx -P 33@47:640x480+0+0@BG24
+Output should indicate the plane id that was activated:
+
+testing 640x480@BG24 overlay plane 33
+Additionally, the plane should be presented with diagonally stripped color pattern on screen.
+Test 3 - Scale the layer (if enabled for the layer)
+From within another console window (and/or if the previous test was run in the background), adjust the layer scale property using modetest. The plane id (33 in case of the example above) will be needed to adjust overlay properties like scale, alpha or background color
+
+root@mixer_proj:~# modetest -M xlnx -w 33:scale:1
+Note that the range of possible values for a property appears in the output of modetest. For example, in the case of plane id 33:
+
+33      0       0       0,0             0,0     0               0x00000001
+  formats: BG24
+  props:
+        5 type:
+                flags: immutable enum
+                enums: Overlay=0 Primary=1 Cursor=2
+                value: 0
+        23 scale:
+                flags: range
+                values: 0 2
+                value: 0
+        24 alpha:
+                flags: range
+                values: 0 256
+                value: 256
+Assuming the up-scaled version of the plane image will fit within the screen, the plane data should be doubled in size by setting the scale property to '1'.
+Test 4 - Change layer alpha (if enabled for the layer)
+Changing the layer alpha will make an existing overlay layer appear more or less transparent. An alpha value of '0' will render the overlay invisible and a value of '256' will be completely opaque. With an existing layer being displayed (see test 2), change the alpha property to '0' to render the layer invisible.
+
+root@mixer_proj:~# modetest -M xlnx -w 33:alpha:0
+The layer should disappear.
+Changing the alpha property back to 256 by repeating the above command with a value of 256 should render it visible again.
+
+root@mixer_proj:~# modetest -M xlnx -w 33:alpha:256
+Test 5 - Change the background color
+The Mixer generates a background color when the primary layer is inactive. By default, this is blue. The color is controlled by an internal RGB-based register and is represented by modetest as a decimal value. The most significant bits represent 'blue' and the least 'red'. As such, by default, only the upper 8 bits are set to generate a solid blue (0xFF0000) resulting in a default value of 16711680.
+
+root@mixer_proj:~# modetest -M xlnx -w 34:bg_color:255
+The background color should be a pure red and the new value of the bg_color property will be 255 (0x0000FF).
+Test 6 - Change the output resolution
+To change Mixer output to a new resolution, modetest must be invoked with the connector id and new resolution. In this example, we change to output 1920x1080:
+root@mixer_proj:~# modetest -M xlnx -s 49:1920x1080@BG24
+
+The output should be an SMPTE color bar pattern on the screen in the new resolution specified (note: an optional refresh rate can be added to the above command when multiple options are available via the monitor's EDID).
+setting mode 1920x1080-60Hz@BG24 on connectors 49, crtc 47
+Vbltest
+vbltest is a test tool which is part of the libdrm suite of test tools. It is used to ensure vertical blanking interrupts are properly sent by the DRM driver.
+Test 7-  Vbltest - Testing vertical blanking interrupts
+root@mixer_proj:~# vbltest -M xlnx
+starting count: 0
+freq: 60.49Hz
+freq: 60.00Hz
+freq: 60.00Hz
+freq: 60.00Hz
+The exact frequency output reported should correspond to the display refresh rate (60 Hz in this example). Simply terminate the test when satisfied.
+
