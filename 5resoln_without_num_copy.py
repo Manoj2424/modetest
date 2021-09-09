@@ -2,16 +2,13 @@ import subprocess
 import time
 
 resolution=[]
-new_resolution=[]
 timing_parameters=[]
-new_timing_parameters=[]
-max_res=0
 
 
 def find_resolution():
 	temp=[]
+	max_res=0
 	global resolution
-	global max_res
 	output = subprocess.check_output("cat modetest | grep '\#'", shell=True)
 	
 	new = output.split()
@@ -33,7 +30,7 @@ def find_resolution():
 
 
 def print_resolution():
-	for i in range(max_res):
+	for i in range(len(resolution)):
 		print(resolution[i])
 		print("timing_para:")
 		temp=timing_parameters[i]
@@ -43,13 +40,19 @@ def print_resolution():
 
 def sort_resolution():
 	global resolution
+	global timing_parameters
 	temp_list=[]
+	temp_list2=[]
 	for i in range(len(resolution)-1):
 		if resolution[i] not in temp_list:
 			temp_list.append(resolution[i])
+			temp_list2.append(timing_parameters[i])
 	resolution=temp_list
+	timing_parameters=temp_list2
 
 
 find_resolution()
-
+print_resolution()
+print("--------------------")
 sort_resolution()
+print_resolution()
